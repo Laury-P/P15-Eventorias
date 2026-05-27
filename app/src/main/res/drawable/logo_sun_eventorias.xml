@@ -14,14 +14,18 @@
   ~ limitations under the License.
   -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="64"
-    android:viewportHeight="67">
-  <group android:scaleX="0.5837479"
-      android:scaleY="0.6111111"
-      android:translateX="13.320066"
-      android:translateY="13.027778">
+    android:width="288dp"
+    android:height="288dp"
+    android:viewportWidth="288"
+    android:viewportHeight="288">
+
+  <group
+      android:pivotX="32"
+      android:pivotY="33.5"
+      android:translateX="112"
+      android:translateY="110.5"
+      android:scaleX="1.9"
+      android:scaleY="1.9">
     <path
         android:pathData="M45.457,32.453C45.46,32.572 45.46,32.691 45.46,32.814V33.005C45.46,33.128 45.457,33.255 45.452,33.379C45.162,41.076 38.958,47.259 31.245,47.549C31.118,47.553 30.994,47.557 30.871,47.561H30.648C30.588,47.561 30.528,47.561 30.472,47.557H30.325C26.078,47.45 22.277,45.554 19.652,42.594C20.038,42.625 20.429,42.645 20.823,42.645C28.986,42.645 35.608,36.041 35.608,27.899C35.608,24.171 34.217,20.766 31.927,18.171C39.321,18.775 45.17,24.815 45.452,32.274C45.452,32.333 45.452,32.393 45.452,32.453H45.457Z"
         android:fillColor="#ffffff"/>

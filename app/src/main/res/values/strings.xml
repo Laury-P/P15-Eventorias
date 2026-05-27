@@ -1,3 +1,4 @@
 <resources>
+    <array name="pas_de_certificats"></array>
     <string name="app_name">Eventorias</string>
 </resources>
