@@ -49,6 +49,7 @@ tasks.withType<Test>().configureEach {
 }
 
 dependencies {
+
     // --- NOYAU & UI ---
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
@@ -63,6 +64,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.compose.icons.extended)
+    implementation(libs.androidx.compose.ui.text.google.fonts)
 
     // Outil pour voir tes aperçus d'écrans dans Android Studio (uniquement en mode debug)
     debugImplementation(libs.androidx.compose.ui.tooling)
