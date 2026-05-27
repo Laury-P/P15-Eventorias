@@ -15,7 +15,6 @@ import androidx.compose.ui.tooling.preview.Preview
 
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.HiltAndroidApp
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

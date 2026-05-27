@@ -4,6 +4,7 @@ package com.openclassroom.eventorias.core.ui.theme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 
 private val DarkColorScheme = darkColorScheme(
     primary = red,
@@ -26,10 +27,21 @@ private val DarkColorScheme = darkColorScheme(
 fun EventoriasTheme(
     content: @Composable () -> Unit
 ) {
+    val colorScheme = DarkColorScheme
+    val typography = Typography
+    val dimensions = compactDimensions
 
-    MaterialTheme(
-        colorScheme = DarkColorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(LocalAppDimensions provides dimensions) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = typography,
+            content = content
+        )
+    }
+}
+
+object EventoriasTheme {
+    val dimensions: EventoriasDimensions
+    @Composable
+    get() = LocalAppDimensions.current
 }
