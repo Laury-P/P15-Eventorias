@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.compose) apply false
 
     // Les services Google (indispensable pour lier Firebase à ton projet)
-    // alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.google.services) apply false
 
     // L'injection de dépendances (Hilt) et son outil d'analyse (KSP)
     alias(libs.plugins.ksp) apply false
