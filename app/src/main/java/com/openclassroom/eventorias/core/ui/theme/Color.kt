@@ -1,4 +1,4 @@
-package com.openclassroom.eventorias.ui.theme
+package com.openclassroom.eventorias.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
