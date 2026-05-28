@@ -1,13 +1,200 @@
 package com.openclassroom.eventorias.features.auth
 
+import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.firebase.ui.auth.AuthState
+import com.firebase.ui.auth.configuration.PasswordRule
+import com.firebase.ui.auth.configuration.authUIConfiguration
+import com.firebase.ui.auth.configuration.auth_provider.AuthProvider
+import com.firebase.ui.auth.configuration.theme.AuthUIAsset
+import com.firebase.ui.auth.ui.screens.FirebaseAuthScreen
+import com.openclassroom.eventorias.R
+import com.openclassroom.eventorias.core.domain.model.User
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.HomeScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Destination<RootGraph>(start = true)
 @Composable
-fun AuthScreen (navigator: DestinationsNavigator) {
-    Text(text = "Verification que la nav de base fonctionne")
+fun AuthScreen(navigator: DestinationsNavigator) {
+    val context = LocalContext.current
+    val configuration = authUIConfiguration {
+        this.logo = AuthUIAsset.Resource(R.drawable.logo_eventorias)
+        this.context = context
+        providers {
+            provider(
+                AuthProvider.Email(
+                    emailLinkActionCodeSettings = null,
+                    passwordValidationRules = listOf(
+                        PasswordRule.MinimumLength(12),
+                        PasswordRule.RequireDigit,
+                        PasswordRule.RequireLowercase,
+                        PasswordRule.RequireSpecialCharacter,
+                        PasswordRule.RequireUppercase
+                    ),
+                    minimumPasswordLength = 6,
+                )
+            )
+        }
+        isMfaEnabled = false
+    }
+
+    FirebaseAuthScreen(
+        modifier = Modifier,
+        configuration = configuration,
+        onSignInSuccess = { _ -> navigator.navigate(HomeScreenDestination(id = 1)) },
+        onSignInFailure = { _ -> TODO() },
+        onSignInCancelled = { TODO() },
+        authenticatedContent = { state, _ ->
+            val user = when (state) {
+                is AuthState.Success -> state.user
+                is AuthState.RequiresEmailVerification -> state.user
+                else -> null
+            }
+
+            if (user != null) {
+                ProfileGuard(
+                    uid = user.uid,
+                    displayName = user.displayName ?: "",
+                    email = user.email ?: "",
+                    onUserReady = { navigator.navigate(HomeScreenDestination(id = 1)) })
+            } else {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+        }
+    )
+}
+
+
+@Composable
+fun ProfileGuard(
+    uid: String,
+    displayName: String,
+    email: String,
+    viewModel: AuthViewModel = hiltViewModel(),
+    onUserReady: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    val context = LocalContext.current
+
+    LaunchedEffect(uid) {
+        viewModel.checkNewUser(uid)
+    }
+
+    LaunchedEffect(uiState) {
+        if (uiState is UiState.Error) {
+            Toast.makeText(context, "An error occured, please retry.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    when (uiState) {
+        UiState.Idle, UiState.Loading -> Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+
+        UiState.NewUser, is UiState.Error -> {
+            ProfileCompletionScreen(
+                displayName = displayName,
+                email = email,
+                state = uiState,
+                onSave = { firstname, lastname, email ->
+                    viewModel.addNewUser(
+                        User(
+                            id = uid,
+                            firstname = firstname,
+                            lastname = lastname,
+                            email = email
+                        )
+                    )
+                }
+            )
+        }
+
+        UiState.UserReady -> {
+            onUserReady()
+        }
+
+    }
+}
+
+@Composable
+fun ProfileCompletionScreen(
+    displayName: String?,
+    email: String,
+    state: UiState,
+    onSave: (String, String, String) -> Unit
+) {
+    val nameParts = displayName?.split(" ")
+    val guessedFirstname = nameParts?.getOrNull(0) ?: ""
+    val guessedLastname =
+        nameParts?.size?.let { if (it > 1) nameParts.drop(1).joinToString(" ") else "" }
+
+    var firstname by remember { mutableStateOf(guessedFirstname) }
+    var lastname by remember { mutableStateOf(guessedLastname ?: "") }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Création du profil pour: $email",
+            modifier = Modifier
+        )
+
+        OutlinedTextField(
+            value = firstname,
+            onValueChange = { firstname = it },
+            label = { Text("Prénom") },
+            modifier = Modifier.padding(16.dp)
+        )
+
+        OutlinedTextField(
+            value = lastname,
+            onValueChange = { lastname = it },
+            label = { Text("Nom") },
+            modifier = Modifier.padding(16.dp)
+        )
+
+        Button(
+            onClick = { onSave(firstname, lastname, email) },
+            enabled = firstname.isNotBlank() && lastname.isNotBlank(),
+        ) {
+            Text(
+                if (state is UiState.Error) "Retry" else "Enregistrer"
+            )
+        }
+    }
+
+
 }

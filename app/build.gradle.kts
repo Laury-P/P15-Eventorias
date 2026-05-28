@@ -77,6 +77,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.compose.destinations.core)
     ksp(libs.compose.destinations.ksp)
+    implementation(libs.hilt.navigation.compose)
 
 
     // --- SERVICES EXTERNES (Firebase & Images) ---
