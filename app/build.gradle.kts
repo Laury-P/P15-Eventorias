@@ -76,7 +76,7 @@ dependencies {
     ksp(libs.hilt.compiler) // KSP génère le code Hilt à la compilation
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.compose.destinations.core)
-    implementation(libs.compose.destinations.ksp)
+    ksp(libs.compose.destinations.ksp)
 
 
     // --- SERVICES EXTERNES (Firebase & Images) ---
