@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.firebase.ui.auth.AuthState
@@ -64,8 +65,12 @@ fun AuthScreen(navigator: DestinationsNavigator) {
         modifier = Modifier,
         configuration = configuration,
         onSignInSuccess = { _ -> navigator.navigate(HomeScreenDestination(id = 1)) },
-        onSignInFailure = { _ -> TODO() },
-        onSignInCancelled = { TODO() },
+        onSignInFailure = { _ ->
+            Toast.makeText(context, R.string.failed_sign_in,Toast.LENGTH_SHORT).show()
+        },
+        onSignInCancelled = {
+            Toast.makeText(context, R.string.canceled_sign_in, Toast.LENGTH_SHORT).show()
+        },
         authenticatedContent = { state, _ ->
             val user = when (state) {
                 is AuthState.Success -> state.user
@@ -110,7 +115,7 @@ fun ProfileGuard(
 
     LaunchedEffect(uiState) {
         if (uiState is UiState.Error) {
-            Toast.makeText(context, "An error occured, please retry.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.error, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -168,21 +173,21 @@ fun ProfileCompletionScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Création du profil pour: $email",
+            text = stringResource(R.string.profile_completion_title, email),
             modifier = Modifier
         )
 
         OutlinedTextField(
             value = firstname,
             onValueChange = { firstname = it },
-            label = { Text("Prénom") },
+            label = { Text(stringResource(R.string.firstname)) },
             modifier = Modifier.padding(16.dp)
         )
 
         OutlinedTextField(
             value = lastname,
             onValueChange = { lastname = it },
-            label = { Text("Nom") },
+            label = { Text(stringResource(R.string.lastname)) },
             modifier = Modifier.padding(16.dp)
         )
 
@@ -191,7 +196,7 @@ fun ProfileCompletionScreen(
             enabled = firstname.isNotBlank() && lastname.isNotBlank(),
         ) {
             Text(
-                if (state is UiState.Error) "Retry" else "Enregistrer"
+                if (state is UiState.Error) stringResource(R.string.retry_button) else stringResource(R.string.save_button)
             )
         }
     }
