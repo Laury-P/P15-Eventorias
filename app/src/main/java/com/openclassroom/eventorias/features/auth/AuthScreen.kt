@@ -69,12 +69,8 @@ fun AuthScreen(navigator: DestinationsNavigator) {
         modifier = Modifier,
         configuration = configuration,
         onSignInSuccess = { _ -> navigator.navigate(HomeScreenDestination(id = 1)) },
-        onSignInFailure = { _ ->
-            Toast.makeText(context, R.string.failed_sign_in,Toast.LENGTH_SHORT).show()
-        },
-        onSignInCancelled = {
-            Toast.makeText(context, R.string.canceled_sign_in, Toast.LENGTH_SHORT).show()
-        },
+        onSignInFailure = { _ -> }, // Gerer par FirebaseUi par un popUp
+        onSignInCancelled = {},
         authenticatedContent = { state, _ ->
             val user = when (state) {
                 is AuthState.Success -> state.user

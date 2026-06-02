@@ -5,8 +5,6 @@
 
     <!-- General Toast -->
     <string name="error">An error occurred, please try again.</string>
-    <string name="failed_sign_in">Failed to sign-in. Check your credential and try again.</string>
-    <string name="canceled_sign_in">Sign-in was canceled.</string>
 
     <!-- Button -->
     <string name="retry_button">Retry</string>
