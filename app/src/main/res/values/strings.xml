@@ -1,4 +1,19 @@
 <resources>
     <array name="pas_de_certificats"></array>
+
     <string name="app_name">Eventorias</string>
+
+    <!-- General Toast -->
+    <string name="error">An error occurred, please try again.</string>
+
+    <!-- Button -->
+    <string name="retry_button">Retry</string>
+    <string name="save_button">Save</string>
+
+    <!-- Auth -->
+    <string name="profile_completion_title">Profile creation for: %1$s</string>
+    <string name="firstname">Firstname</string>
+    <string name="lastname">Lastname</string>
+
+
 </resources>
