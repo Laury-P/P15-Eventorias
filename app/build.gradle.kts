@@ -97,6 +97,7 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 
     // --- 🧪 TESTS D'INTÉGRATION & UI (Dossier androidTest/ - JUnit 4 & Compose UI) ---
     androidTestImplementation(platform(libs.androidx.compose.bom))
