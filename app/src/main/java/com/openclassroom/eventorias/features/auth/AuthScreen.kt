@@ -33,7 +33,7 @@ import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.domain.model.User
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.generated.destinations.HomeScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.EventListScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Destination<RootGraph>(start = true)
@@ -68,7 +68,7 @@ fun AuthScreen(navigator: DestinationsNavigator) {
     FirebaseAuthScreen(
         modifier = Modifier,
         configuration = configuration,
-        onSignInSuccess = { _ -> navigator.navigate(HomeScreenDestination(id = 1)) },
+        onSignInSuccess = { _ -> navigator.navigate(EventListScreenDestination()) },
         onSignInFailure = { _ -> }, // Gerer par FirebaseUi par un popUp
         onSignInCancelled = {},
         authenticatedContent = { state, _ ->
@@ -83,7 +83,7 @@ fun AuthScreen(navigator: DestinationsNavigator) {
                     uid = user.uid,
                     displayName = user.displayName ?: "",
                     email = user.email ?: "",
-                    onUserReady = { navigator.navigate(HomeScreenDestination(id = 1)) })
+                    onUserReady = { navigator.navigate(EventListScreenDestination()) })
             } else {
                 Box(
                     modifier = Modifier.fillMaxSize(),
