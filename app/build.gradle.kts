@@ -43,6 +43,18 @@ android {
     buildFeatures {
         compose = true
     }
+
+    packaging {
+        resources {
+            // Exclut les fichiers de licence de JUnit qui provoquent le conflit
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
+
+            // Par sécurité, on peut aussi ajouter ces exclusions classiques souvent liées à JUnit 5 / MockK
+            excludes += "/META-INF/LICENSE"
+            excludes += "/META-INF/NOTICE"
+        }
+    }
 }
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
@@ -105,6 +117,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.mockk.android)
 
     // Requis pour inspecter l'arborescence Compose pendant les tests d'UI
     debugImplementation(libs.androidx.compose.ui.test.manifest)

@@ -104,6 +104,7 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 
 # --- Outils d'aide aux tests (Communs) ---
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+mockk-android = {group = "io.mockk", name = "mockk-android", version.ref = "mockk"}
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
