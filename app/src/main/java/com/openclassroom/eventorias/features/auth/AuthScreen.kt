@@ -57,6 +57,10 @@ fun AuthScreen(navigator: DestinationsNavigator) {
                     minimumPasswordLength = 6,
                 )
             )
+            provider(AuthProvider.Google(
+                serverClientId = "806226545135-p2nifuc8ennk3a6feuqt0k6qvsg7m6vt.apps.googleusercontent.com",
+                scopes = emptyList(),
+            ))
         }
         isMfaEnabled = false
     }
