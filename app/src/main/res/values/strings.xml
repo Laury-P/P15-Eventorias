@@ -15,5 +15,18 @@
     <string name="firstname">Firstname</string>
     <string name="lastname">Lastname</string>
 
+    <!-- Event -->
+    <string name="category_music">Music</string>
+    <string name="category_art">Art &amp; Exhibition</string>
+    <string name="category_tech">Tech &amp; Innovation</string>
+    <string name="category_food_drink">Food &amp; Drink</string>
+    <string name="category_literature">Literature</string>
+    <string name="category_cinema">Cinema &amp; Screenings</string>
+    <string name="category_charity">Charity</string>
+    <string name="category_sports">Sports</string>
+    <string name="category_business">Networking &amp; Business</string>
+    <string name="category_lifestyle">Lifestyle &amp; Hobbies</string>
+    <string name="category_diverse">Diverse</string>
+
 
 </resources>
