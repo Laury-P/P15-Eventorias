@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
+import com.openclassroom.eventorias.core.utils.toFormattedString
 import com.openclassroom.eventorias.features.events.eventList.model.ListEventUiModel
 
 @Composable
@@ -68,7 +69,7 @@ fun EventItem(uiEvent: ListEventUiModel, onEventClick: () -> Unit) {
                 ) {
                     Text(text = event.title, style = MaterialTheme.typography.bodyLarge)
                     Text(
-                        text = event.dateTime.toLocalDate().toString(),
+                        text = event.dateTime.toFormattedString(),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
