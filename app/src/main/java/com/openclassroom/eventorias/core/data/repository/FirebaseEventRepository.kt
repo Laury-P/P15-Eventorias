@@ -2,6 +2,8 @@ package com.openclassroom.eventorias.core.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots
+import com.openclassroom.eventorias.core.data.mapping.toDomain
+import com.openclassroom.eventorias.core.data.model.EventDto
 import com.openclassroom.eventorias.core.domain.model.Event
 import com.openclassroom.eventorias.core.domain.repository.EventRepository
 import jakarta.inject.Inject
@@ -14,7 +16,7 @@ class FirebaseEventRepository @Inject constructor(private val firestore: Firebas
         .snapshots()
         .map { snapshots ->
             snapshots.documents.mapNotNull { documentSnapshot ->
-                documentSnapshot.toObject(Event::class.java)
+                documentSnapshot.toObject(EventDto::class.java)?.toDomain()
             }
         }
 }

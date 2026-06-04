@@ -18,10 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.openclassroom.eventorias.R
-import com.openclassroom.eventorias.features.events.eventList.model.ListEventUiModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -31,9 +33,10 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun EventListScreen(
     navigator: DestinationsNavigator,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: EventListViewModel = hiltViewModel()
 ) {
-    val listEvent : List<ListEventUiModel> = emptyList() // TODO Brancher au viewModel
+    val listEvent by viewModel.eventList.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = modifier,
