@@ -115,7 +115,7 @@ fun ProfileGuard(
 
     LaunchedEffect(uiState) {
         if (uiState is UiState.Error) {
-            Toast.makeText(context, R.string.error, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.error_text, Toast.LENGTH_SHORT).show()
         }
     }
 

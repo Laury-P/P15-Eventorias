@@ -5,20 +5,27 @@ import com.openclassroom.eventorias.core.domain.repository.EventRepository
 import com.openclassroom.eventorias.features.events.eventList.model.ListEventUiModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import okhttp3.internal.ignoreIoExceptions
 
 class GetUiEventListUseCase @Inject constructor(
     private val eventRepository: EventRepository,
     private val userRepository: FirebaseUserRepository
 ) {
-    operator fun invoke() : Flow<List<ListEventUiModel>> {
-        return eventRepository.getListEvent().map{ eventList ->
-            eventList.map { event ->
-                val promoter = userRepository.getCurrentUser(event.promoterId)
-                val promoterURL = promoter?.avatar ?: ""
-                ListEventUiModel(event = event, promoterAvatarUrl = promoterURL)
+    operator fun invoke(): Flow<Result<List<ListEventUiModel>>> {
+        return eventRepository.getListEvent()
+            .map { eventList ->
+                val uiList = eventList.map { event ->
+                    val promoter = userRepository.getCurrentUser(event.promoterId)
+                    val promoterURL = promoter?.avatar ?: ""
+                    ListEventUiModel(event = event, promoterAvatarUrl = promoterURL)
+                }
+                Result.success(uiList)
             }
-        }
+            .catch { exception ->
+                emit(Result.failure(exception))
+            }
     }
 
 }

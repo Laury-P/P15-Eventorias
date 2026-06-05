@@ -32,6 +32,7 @@
     <string name="search_button_description">Search an event</string>
     <string name="sort_button_description">Sort events</string>
     <string name="add_fab_description">Add an event</string>
+    <string name="empty_list">No event scheduled yet.</string>
 
 
 
