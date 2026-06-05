@@ -3,11 +3,12 @@
 
     <string name="app_name">Eventorias</string>
 
-    <!-- General Toast -->
-    <string name="error">An error occurred, please try again.</string>
+    <!-- Error -->
+    <string name="error_text">An error has occurred, \nplease try again later.</string>
+    <string name="error_title">Error</string>
 
     <!-- Button -->
-    <string name="retry_button">Retry</string>
+    <string name="retry_button">Try again</string>
     <string name="save_button">Save</string>
 
     <!-- Auth -->
@@ -31,6 +32,8 @@
     <string name="search_button_description">Search an event</string>
     <string name="sort_button_description">Sort events</string>
     <string name="add_fab_description">Add an event</string>
+
+
 
 
 

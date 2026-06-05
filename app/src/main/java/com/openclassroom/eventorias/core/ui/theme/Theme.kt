@@ -21,6 +21,7 @@ private val DarkColorScheme = darkColorScheme(
 
     surface = grey,
     onSurface = lightGrey,
+
 )
 
 @Composable
@@ -35,7 +36,8 @@ fun EventoriasTheme(
         MaterialTheme(
             colorScheme = colorScheme,
             typography = typography,
-            content = content
+            content = content,
+            shapes = Shapes
         )
     }
 }
