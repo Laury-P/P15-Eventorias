@@ -33,6 +33,9 @@
     <string name="sort_button_description">Sort events</string>
     <string name="add_fab_description">Add an event</string>
     <string name="empty_list">No event scheduled yet.</string>
+    <string name="search_label">Search events…</string>
+    <string name="close_searchbar_description">Close the search bar.</string>
+    <string name="delete_search_description">Delete the current search.</string>
 
 
 
