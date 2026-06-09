@@ -1,19 +1,18 @@
 package com.openclassroom.eventorias.features.events.eventList
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,16 +33,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.openclassroom.eventorias.R
-import com.openclassroom.eventorias.features.events.eventList.component.ErrorComponent
+import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
+import com.openclassroom.eventorias.features.events.eventList.component.CategoryFilterChip
+import com.openclassroom.eventorias.features.events.eventList.component.CustomSearchBar
+import com.openclassroom.eventorias.features.events.eventList.component.ErrorScreen
 import com.openclassroom.eventorias.features.events.eventList.component.EventItem
+import com.openclassroom.eventorias.features.events.eventList.component.FilterScreen
 import com.openclassroom.eventorias.features.events.eventList.component.LoadingComponent
 import com.openclassroom.eventorias.features.events.eventList.model.ListEventUiState
 import com.ramcosta.composedestinations.annotation.Destination
@@ -58,13 +57,18 @@ fun EventListScreen(
     modifier: Modifier = Modifier,
     viewModel: EventListViewModel = hiltViewModel()
 ) {
+    val dims = EventoriasTheme.dimensions
+
     val listEventState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
-    var isSearchBarActive by remember { mutableStateOf(false) }
+    val selectedCategory by viewModel.selectedCategory.collectAsStateWithLifecycle()
+
+    var isSearchBarActive by remember { mutableStateOf(false) } // For the search bar
     val focusRequester = remember { FocusRequester() }
 
+    var isFilterExposed by remember { mutableStateOf(false) } // For the filter dropDownMenu
 
     LaunchedEffect(isSearchBarActive) {
         if (isSearchBarActive) focusRequester.requestFocus()
@@ -118,11 +122,13 @@ fun EventListScreen(
                         }
 
                         IconButton(
-                            onClick = { TODO() }
+                            onClick = { isFilterExposed = !isFilterExposed }
                         ) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Sort,
-                                contentDescription = stringResource(R.string.sort_button_description)
+                                imageVector = if (isFilterExposed) Icons.Default.Close else Icons.AutoMirrored.Filled.Sort,
+                                contentDescription = if (isFilterExposed) "close sort window" else stringResource(
+                                    R.string.sort_button_description
+                                )
                             )
                         }
                     } else {
@@ -154,68 +160,58 @@ fun EventListScreen(
             }
         },
     ) { innerPadding ->
-        when (val currentState = listEventState) {
-            is ListEventUiState.Loading -> LoadingComponent()
-            is ListEventUiState.Error -> ErrorComponent(onRetryClick = { viewModel.retry() })
-            is ListEventUiState.Success -> {
-                val list = currentState.listEvent
-                if (list.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(R.string.empty_list),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                } else {
-                    LazyColumn(modifier.padding(innerPadding)) {
-                        items(list) { event ->
-                            EventItem(uiEvent = event, onEventClick = { TODO() })
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = dims.padding24)
+        ) {
+            if (isFilterExposed) {
+                FilterScreen(
+                    modifier = Modifier.fillMaxWidth(),
+                    selectedCategory = selectedCategory,
+                    onChipsSelected = { viewModel.setCategoryFilter(it) }
+                )
+            }
+            when (val currentState = listEventState) {
+                is ListEventUiState.Loading -> LoadingComponent()
+                is ListEventUiState.Error -> ErrorScreen(onRetryClick = { viewModel.retry() })
+                is ListEventUiState.Success -> {
+                    val list = currentState.listEvent
+                    if (list.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(R.string.empty_list),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    } else {
+                        LazyColumn {
+                            item {
+                                if (!isFilterExposed) {
+                                    selectedCategory?.let {
+                                        CategoryFilterChip(
+                                            modifier = Modifier,
+                                            chipsCategory = it,
+                                            currentCategory = it,
+                                            onChipsSelected = { viewModel.setCategoryFilter(null) })
+                                    }
+                                }
+                            }
+                            items(list) { event ->
+                                EventItem(uiEvent = event, onEventClick = { TODO() })
+                            }
                         }
                     }
                 }
             }
         }
+
     }
 }
 
-@Composable
-fun CustomSearchBar(
-    searchQuery: String,
-    onQueryChanged: (String) -> Unit,
-    focusRequester: FocusRequester
-) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    BasicTextField(
-        value = searchQuery,
-        onValueChange = { onQueryChanged(it) },
-        textStyle = MaterialTheme.typography.bodyLarge.copy(
-            color = MaterialTheme.colorScheme.onBackground
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .focusRequester(focusRequester),
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(
-            onSearch = {
-                keyboardController?.hide()
-                focusRequester.freeFocus()
-            }
-        ),
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
-        decorationBox = { innerTextField ->
-            if (searchQuery.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.search_label),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
-                )
-            }
-            innerTextField()
-        }
-    )
-}
 

@@ -35,7 +35,6 @@ fun EventItem(uiEvent: ListEventUiModel, onEventClick: () -> Unit) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = dims.padding24)
             .padding(top = dims.padding8)
             .height(dims.cardHeight),
         shape = MaterialTheme.shapes.medium
