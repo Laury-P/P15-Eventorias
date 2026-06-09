@@ -36,9 +36,9 @@
     <string name="search_label">Search events…</string>
     <string name="close_searchbar_description">Close the search bar.</string>
     <string name="delete_search_description">Delete the current search.</string>
-
-
-
+    <string name="all_chip_label">All</string>
+    <string name="sort_date_text">Sort by date</string>
+    <string name="sort_category_text">Sort by category</string>
 
 
 </resources>
