@@ -1,11 +1,14 @@
 package com.openclassroom.eventorias.features.events.eventList
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -16,6 +19,8 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,7 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
-import com.openclassroom.eventorias.features.events.eventList.component.CategoryFilterChip
+import com.openclassroom.eventorias.core.utils.toFormattedString
 import com.openclassroom.eventorias.features.events.eventList.component.CustomSearchBar
 import com.openclassroom.eventorias.features.events.eventList.component.ErrorScreen
 import com.openclassroom.eventorias.features.events.eventList.component.EventItem
@@ -64,6 +69,8 @@ fun EventListScreen(
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
     val selectedCategory by viewModel.selectedCategory.collectAsStateWithLifecycle()
+
+    val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
 
     var isSearchBarActive by remember { mutableStateOf(false) } // For the search bar
     val focusRequester = remember { FocusRequester() }
@@ -126,8 +133,9 @@ fun EventListScreen(
                         ) {
                             Icon(
                                 imageVector = if (isFilterExposed) Icons.Default.Close else Icons.AutoMirrored.Filled.Sort,
-                                contentDescription = if (isFilterExposed) "close sort window" else stringResource(
-                                    R.string.sort_button_description
+                                contentDescription = stringResource(
+                                    if (isFilterExposed) R.string.close_sort_description
+                                    else R.string.sort_button_description
                                 )
                             )
                         }
@@ -170,13 +178,48 @@ fun EventListScreen(
                 FilterScreen(
                     modifier = Modifier.fillMaxWidth(),
                     selectedCategory = selectedCategory,
-                    onChipsSelected = { viewModel.setCategoryFilter(it) }
+                    onChipsSelected = { viewModel.setCategoryFilter(it) },
+                    selectedDate = selectedDate,
+                    onDateSelected = { viewModel.setDateFilter(it) },
                 )
             }
             when (val currentState = listEventState) {
                 is ListEventUiState.Loading -> LoadingComponent()
                 is ListEventUiState.Error -> ErrorScreen(onRetryClick = { viewModel.retry() })
                 is ListEventUiState.Success -> {
+                    if (!isFilterExposed) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(dims.padding8)
+                        ) {
+                            selectedDate?.let {
+                                FilterChip(
+                                    selected = true,
+                                    onClick = { viewModel.setDateFilter(null) },
+                                    label = { Text(it.toFormattedString()) },
+                                    trailingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = stringResource(R.string.remove_date_filter_description),
+                                            modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                        )
+                                    }
+                                )
+                            }
+                            selectedCategory?.let {
+                                FilterChip(
+                                    selected = true,
+                                    label = { Text(stringResource(it.labelResId)) },
+                                    onClick = { viewModel.setCategoryFilter(null) },
+                                    trailingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = stringResource(R.string.remove_category_filter_description),
+                                            modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                        )
+                                    })
+                            }
+                        }
+                    }
                     val list = currentState.listEvent
                     if (list.isEmpty()) {
                         Box(
@@ -191,17 +234,6 @@ fun EventListScreen(
                         }
                     } else {
                         LazyColumn {
-                            item {
-                                if (!isFilterExposed) {
-                                    selectedCategory?.let {
-                                        CategoryFilterChip(
-                                            modifier = Modifier,
-                                            chipsCategory = it,
-                                            currentCategory = it,
-                                            onChipsSelected = { viewModel.setCategoryFilter(null) })
-                                    }
-                                }
-                            }
                             items(list) { event ->
                                 EventItem(uiEvent = event, onEventClick = { TODO() })
                             }

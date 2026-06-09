@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import kotlin.collections.emptyList
 
 @HiltViewModel
@@ -35,14 +36,18 @@ class EventListViewModel @Inject constructor(eventListUseCase: GetUiEventListUse
     private val _selectedCategory = MutableStateFlow<EventCategory?>(null)
     val selectedCategory: StateFlow<EventCategory?> = _selectedCategory
 
+    private val _selectedDate = MutableStateFlow<LocalDate?>(null)
+    val selectedDate : StateFlow<LocalDate?> = _selectedDate
+
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     val uiState: StateFlow<ListEventUiState> = refreshSignal
         .flatMapLatest {
             combine(
                 eventListUseCase(),
                 _searchQuery.debounce(200),
-                _selectedCategory
-            ) { result, searchQuery, selectedCategory ->
+                _selectedCategory,
+                _selectedDate
+            ) { result, searchQuery, selectedCategory, selectedDate ->
                 if (result.isSuccess) {
                     val list = result.getOrNull() ?: emptyList()
                     val filteredList = list
@@ -54,6 +59,11 @@ class EventListViewModel @Inject constructor(eventListUseCase: GetUiEventListUse
                         .filter {uiEvent ->
                             if(selectedCategory!= null) {
                                 uiEvent.event.category == selectedCategory
+                            } else true
+                        }
+                        .filter { uiEvent ->
+                            if(selectedDate != null) {
+                                uiEvent.event.dateTime.toLocalDate() == selectedDate
                             } else true
                         }
                     ListEventUiState.Success(listEvent = filteredList)
@@ -82,5 +92,9 @@ class EventListViewModel @Inject constructor(eventListUseCase: GetUiEventListUse
 
     fun setCategoryFilter(newCategory: EventCategory?) {
         _selectedCategory.value = newCategory
+    }
+
+    fun setDateFilter(newDate: LocalDate?) {
+        _selectedDate.value = newDate
     }
 }
