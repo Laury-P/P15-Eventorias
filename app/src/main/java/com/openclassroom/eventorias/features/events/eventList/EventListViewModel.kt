@@ -2,11 +2,13 @@ package com.openclassroom.eventorias.features.events.eventList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.openclassroom.eventorias.core.domain.model.EventCategory
 import com.openclassroom.eventorias.features.events.eventList.model.ListEventUiState
 import com.openclassroom.eventorias.features.events.usecases.GetUiEventListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,28 +26,36 @@ class EventListViewModel @Inject constructor(eventListUseCase: GetUiEventListUse
     ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
-    val searchQuery : StateFlow<String> = _searchQuery
+    val searchQuery: StateFlow<String> = _searchQuery
 
     private val refreshSignal = MutableSharedFlow<Unit>(replay = 1).apply {
         tryEmit(Unit)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    private val _selectedCategory = MutableStateFlow<EventCategory?>(null)
+    val selectedCategory: StateFlow<EventCategory?> = _selectedCategory
+
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     val uiState: StateFlow<ListEventUiState> = refreshSignal
         .flatMapLatest {
             combine(
                 eventListUseCase(),
-                _searchQuery.debounce(200)
-            ) { result, searchQuery ->
+                _searchQuery.debounce(200),
+                _selectedCategory
+            ) { result, searchQuery, selectedCategory ->
                 if (result.isSuccess) {
                     val list = result.getOrNull() ?: emptyList()
-                    val filteredList = if (searchQuery.isNotBlank()) {
-                        list.filter { uiEvent ->
-                            uiEvent.event.title.contains(searchQuery, ignoreCase = true)
+                    val filteredList = list
+                        .filter { uiEvent ->
+                            if (searchQuery.isNotBlank()) {
+                                uiEvent.event.title.contains(searchQuery, ignoreCase = true)
+                            } else true
                         }
-                    } else {
-                        list
-                    }
+                        .filter {uiEvent ->
+                            if(selectedCategory!= null) {
+                                uiEvent.event.category == selectedCategory
+                            } else true
+                        }
                     ListEventUiState.Success(listEvent = filteredList)
                 } else {
                     val exception = result.exceptionOrNull()
@@ -68,5 +78,9 @@ class EventListViewModel @Inject constructor(eventListUseCase: GetUiEventListUse
 
     fun setSearchQuery(newQuery: String) {
         _searchQuery.value = newQuery
+    }
+
+    fun setCategoryFilter(newCategory: EventCategory?) {
+        _selectedCategory.value = newCategory
     }
 }
