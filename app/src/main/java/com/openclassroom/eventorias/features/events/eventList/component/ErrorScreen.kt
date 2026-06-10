@@ -21,7 +21,7 @@ import com.openclassroom.eventorias.core.ui.component.RetryButton
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
 
 @Composable
-fun ErrorComponent(onRetryClick: () -> Unit) {
+fun ErrorScreen(onRetryClick: () -> Unit) {
     val dims = EventoriasTheme.dimensions
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -61,8 +61,8 @@ fun ErrorComponent(onRetryClick: () -> Unit) {
 
 @Preview
 @Composable
-fun ErrorComponentPreview() {
+fun ErrorScreenPreview() {
     EventoriasTheme {
-        ErrorComponent(onRetryClick = {})
+        ErrorScreen(onRetryClick = {})
     }
 }

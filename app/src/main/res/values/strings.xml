@@ -10,6 +10,8 @@
     <!-- Button -->
     <string name="retry_button">Try again</string>
     <string name="save_button">Save</string>
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">Cancel</string>
 
     <!-- Auth -->
     <string name="profile_completion_title">Profile creation for: %1$s</string>
@@ -31,11 +33,19 @@
     <string name="category_diverse">Diverse</string>
     <string name="search_button_description">Search an event</string>
     <string name="sort_button_description">Sort events</string>
+    <string name="close_sort_description">Close sort panel</string>
     <string name="add_fab_description">Add an event</string>
     <string name="empty_list">No event scheduled yet.</string>
-
-
-
+    <string name="search_label">Search events…</string>
+    <string name="close_searchbar_description">Close the search bar.</string>
+    <string name="delete_search_description">Delete the current search.</string>
+    <string name="all_chip_label">All</string>
+    <string name="sort_date_text">Sort by date</string>
+    <string name="choose_date_label">Choose a date…</string>
+    <string name="sort_category_text">Sort by category</string>
+    <string name="remove_date_filter_description">Remove date filter</string>
+    <string name="remove_category_filter_description">Remove category filter</string>
+    <string name="on_event_click_label">See event details</string>
 
 
 </resources>

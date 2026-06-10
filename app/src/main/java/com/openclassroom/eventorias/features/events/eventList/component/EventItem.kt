@@ -1,5 +1,6 @@
 package com.openclassroom.eventorias.features.events.eventList.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import coil.compose.AsyncImage
+import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
 import com.openclassroom.eventorias.core.utils.toFormattedString
 import com.openclassroom.eventorias.features.events.eventList.model.ListEventUiModel
@@ -35,9 +40,12 @@ fun EventItem(uiEvent: ListEventUiModel, onEventClick: () -> Unit) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = dims.padding24)
             .padding(top = dims.padding8)
-            .height(dims.cardHeight),
+            .height(dims.cardHeight)
+            .clickable(enabled = true, onClick = {onEventClick()}, onClickLabel = stringResource(R.string.on_event_click_label))
+            .clearAndSetSemantics{
+                contentDescription = event.title + " " + event.dateTime.toFormattedString()
+            },
         shape = MaterialTheme.shapes.medium
     ) {
         Row(
