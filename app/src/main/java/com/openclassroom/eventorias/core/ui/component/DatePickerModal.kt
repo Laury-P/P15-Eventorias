@@ -1,4 +1,4 @@
-package com.openclassroom.eventorias.core.utils
+package com.openclassroom.eventorias.core.ui.component
 
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog

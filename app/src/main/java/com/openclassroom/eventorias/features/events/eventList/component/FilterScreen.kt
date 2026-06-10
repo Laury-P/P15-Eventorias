@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.domain.model.EventCategory
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
-import com.openclassroom.eventorias.core.utils.DatePickerModal
+import com.openclassroom.eventorias.core.ui.component.DatePickerModal
 import com.openclassroom.eventorias.core.utils.toFormattedString
 import java.time.LocalDate
 
