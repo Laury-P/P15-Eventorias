@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.domain.model.EventCategory
@@ -79,7 +80,7 @@ fun FilterScreen(
             )
             EventCategory.entries.forEach { category ->
                 CategoryFilterChip(
-                    modifier = Modifier,
+                    modifier = Modifier.testTag("${category}_filter_button"),
                     currentCategory = selectedCategory,
                     chipsCategory = category,
                     onChipsSelected = { onChipsSelected(category) }

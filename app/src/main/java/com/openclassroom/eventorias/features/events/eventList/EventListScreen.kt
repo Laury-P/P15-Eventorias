@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -91,7 +92,7 @@ fun EventListScreen(
                         CustomSearchBar(
                             searchQuery = searchQuery,
                             onQueryChanged = { viewModel.setSearchQuery(it) },
-                            focusRequester = focusRequester
+                            focusRequester = focusRequester,
                         )
                     } else Text(stringResource(R.string.event_list_screen_title))
                 },
@@ -120,6 +121,7 @@ fun EventListScreen(
                     // When the search isn't active the buttons are the search button and the filter button
                     if (!isSearchBarActive) {
                         IconButton(
+                            modifier = Modifier.testTag("search_button"),
                             onClick = { isSearchBarActive = true },
                         ) {
                             Icon(
@@ -129,6 +131,7 @@ fun EventListScreen(
                         }
 
                         IconButton(
+                            modifier = Modifier.testTag("filter_button"),
                             onClick = { isFilterExposed = !isFilterExposed }
                         ) {
                             Icon(
@@ -142,6 +145,7 @@ fun EventListScreen(
                     } else {
                         // When the search is active, the button delete the active query
                         IconButton(
+                            modifier = Modifier.testTag("close_search_button"),
                             onClick = {
                                 if (searchQuery.isNotEmpty()) viewModel.setSearchQuery("")
                                 else isSearchBarActive = false
@@ -202,7 +206,8 @@ fun EventListScreen(
                                             contentDescription = stringResource(R.string.remove_date_filter_description),
                                             modifier = Modifier.size(FilterChipDefaults.IconSize)
                                         )
-                                    }
+                                    },
+                                    modifier = Modifier.testTag("date_filter_chip")
                                 )
                             }
                             selectedCategory?.let {
@@ -216,7 +221,9 @@ fun EventListScreen(
                                             contentDescription = stringResource(R.string.remove_category_filter_description),
                                             modifier = Modifier.size(FilterChipDefaults.IconSize)
                                         )
-                                    })
+                                    },
+                                    modifier = Modifier.testTag("category_filter_chip")
+                                )
                             }
                         }
                     }
