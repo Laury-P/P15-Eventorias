@@ -27,4 +27,14 @@ class FirebaseEventRepository @Inject constructor(private val firestore: Firebas
                 }
             }
     }
+
+    override fun getEventById(id : String): Flow<Event?> {
+        return firestore.collection("events")
+            .document(id)
+            .snapshots()
+            .map { documentSnapshot ->
+                documentSnapshot.toObject(EventDto::class.java)?.toDomain()
+            }
+    }
+
 }

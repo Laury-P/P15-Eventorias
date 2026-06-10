@@ -5,4 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface EventRepository {
     fun getListEvent() : Flow<List<Event>>
+
+    fun getEventById(id: String) : Flow<Event?>
 }
