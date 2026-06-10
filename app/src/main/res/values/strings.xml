@@ -45,6 +45,7 @@
     <string name="sort_category_text">Sort by category</string>
     <string name="remove_date_filter_description">Remove date filter</string>
     <string name="remove_category_filter_description">Remove category filter</string>
+    <string name="on_event_click_label">See event details</string>
 
 
 </resources>
