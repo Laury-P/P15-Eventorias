@@ -1,6 +1,5 @@
 package com.openclassroom.eventorias.features.events.eventList.model
 
-import kotlinx.coroutines.flow.Flow
 
 sealed interface ListEventUiState {
     data object Loading : ListEventUiState
