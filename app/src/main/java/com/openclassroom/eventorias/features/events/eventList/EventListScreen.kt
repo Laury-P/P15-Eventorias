@@ -53,6 +53,7 @@ import com.openclassroom.eventorias.features.events.eventList.component.LoadingC
 import com.openclassroom.eventorias.features.events.eventList.model.ListEventUiState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.EventDetailScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -241,8 +242,11 @@ fun EventListScreen(
                         }
                     } else {
                         LazyColumn {
-                            items(list) { event ->
-                                EventItem(uiEvent = event, onEventClick = { TODO() })
+                            items(list) { uiEvent ->
+                                val eventID = uiEvent.event.id
+                                EventItem(uiEvent = uiEvent, onEventClick = { navigator.navigate(
+                                    EventDetailScreenDestination(eventId = eventID)
+                                ) })
                             }
                         }
                     }
