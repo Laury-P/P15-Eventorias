@@ -12,6 +12,7 @@ data class EventoriasDimensions(
     val padding20 : Dp,
     val padding24 : Dp,
     val avatarEventList : Dp,
+    val avatarDetail : Dp,
     val cardHeight : Dp,
     val errorIconSize : Dp,
     val detailIconSize : Dp,
@@ -30,6 +31,7 @@ val compactDimensions = EventoriasDimensions(
     padding20 = 20.dp,
 
     avatarEventList = 40.dp,
+    avatarDetail = 60.dp,
     cardHeight = 80.dp,
     errorIconSize = 64.dp,
     detailIconSize = 24.dp,

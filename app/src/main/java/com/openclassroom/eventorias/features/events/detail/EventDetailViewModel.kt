@@ -20,7 +20,6 @@ class EventDetailViewModel @Inject constructor(
 
     private val eventId: String? = savedStateHandle["eventId"]
 
-
     private val _uiState = MutableStateFlow<DetailEventUiState>(DetailEventUiState.Loading)
     val uiState : StateFlow<DetailEventUiState> = _uiState
 
