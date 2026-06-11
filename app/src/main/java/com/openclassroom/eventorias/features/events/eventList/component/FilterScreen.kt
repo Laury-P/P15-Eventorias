@@ -18,7 +18,7 @@ import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.domain.model.EventCategory
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
 import com.openclassroom.eventorias.core.ui.component.DatePickerModal
-import com.openclassroom.eventorias.core.utils.toFormattedString
+import com.openclassroom.eventorias.core.utils.toFormattedDateString
 import java.time.LocalDate
 
 @Composable
@@ -56,7 +56,7 @@ fun FilterScreen(
                 label = {
                     Text(
                         if (isCustomDateActive) {
-                            selectedDate.toFormattedString()
+                            selectedDate.toFormattedDateString()
                         } else stringResource(R.string.choose_date_label)
                     )
                 }

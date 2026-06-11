@@ -44,7 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
-import com.openclassroom.eventorias.core.utils.toFormattedString
+import com.openclassroom.eventorias.core.utils.toFormattedDateString
 import com.openclassroom.eventorias.features.events.eventList.component.CustomSearchBar
 import com.openclassroom.eventorias.features.events.eventList.component.ErrorScreen
 import com.openclassroom.eventorias.features.events.eventList.component.EventItem
@@ -200,7 +200,7 @@ fun EventListScreen(
                                 FilterChip(
                                     selected = true,
                                     onClick = { viewModel.setDateFilter(null) },
-                                    label = { Text(it.toFormattedString()) },
+                                    label = { Text(it.toFormattedDateString()) },
                                     trailingIcon = {
                                         Icon(
                                             imageVector = Icons.Default.Close,

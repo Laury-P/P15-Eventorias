@@ -27,7 +27,7 @@ import androidx.compose.ui.semantics.contentDescription
 import coil.compose.AsyncImage
 import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
-import com.openclassroom.eventorias.core.utils.toFormattedString
+import com.openclassroom.eventorias.core.utils.toFormattedDateString
 import com.openclassroom.eventorias.features.events.eventList.model.ListEventUiModel
 
 @Composable
@@ -44,7 +44,7 @@ fun EventItem(uiEvent: ListEventUiModel, onEventClick: () -> Unit) {
             .height(dims.cardHeight)
             .clickable(enabled = true, onClick = {onEventClick()}, onClickLabel = stringResource(R.string.on_event_click_label))
             .clearAndSetSemantics{
-                contentDescription = event.title + " " + event.dateTime.toFormattedString()
+                contentDescription = event.title + " " + event.dateTime.toFormattedDateString()
             },
         shape = MaterialTheme.shapes.medium
     ) {
@@ -77,7 +77,7 @@ fun EventItem(uiEvent: ListEventUiModel, onEventClick: () -> Unit) {
                 ) {
                     Text(text = event.title, style = MaterialTheme.typography.bodyLarge)
                     Text(
-                        text = event.dateTime.toFormattedString(),
+                        text = event.dateTime.toFormattedDateString(),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }

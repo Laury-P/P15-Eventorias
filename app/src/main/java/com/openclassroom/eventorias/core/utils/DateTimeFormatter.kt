@@ -7,10 +7,15 @@ import java.util.Locale
 
 val dateFormatter : DateTimeFormatter = DateTimeFormatter.ofPattern("MMMM d, yyyy").withLocale(Locale.ENGLISH)
 
-fun LocalDateTime.toFormattedString(): String {
+val timeFormatter : DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
+fun LocalDateTime.toFormattedDateString(): String {
     return this.format(dateFormatter)
 }
 
-fun LocalDate.toFormattedString(): String {
+fun LocalDate.toFormattedDateString(): String {
     return this.format(dateFormatter)
+}
+
+fun LocalDateTime.toFormattedTimeString(): String {
+    return this.format(timeFormatter)
 }
