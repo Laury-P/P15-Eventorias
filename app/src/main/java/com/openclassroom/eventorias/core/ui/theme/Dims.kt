@@ -14,7 +14,7 @@ data class EventoriasDimensions(
     val avatarEventList : Dp,
     val cardHeight : Dp,
     val errorIconSize : Dp,
-
+    val detailIconSize : Dp,
 )
 
 val compactDimensions = EventoriasDimensions(
@@ -31,7 +31,8 @@ val compactDimensions = EventoriasDimensions(
 
     avatarEventList = 40.dp,
     cardHeight = 80.dp,
-    errorIconSize = 64.dp
+    errorIconSize = 64.dp,
+    detailIconSize = 24.dp,
 )
 
 val LocalAppDimensions = staticCompositionLocalOf { compactDimensions }

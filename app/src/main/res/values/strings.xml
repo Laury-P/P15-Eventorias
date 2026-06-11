@@ -19,7 +19,6 @@
     <string name="lastname">Lastname</string>
 
     <!-- Event -->
-    <string name="event_list_screen_title">Event List</string>
     <string name="category_music">Music</string>
     <string name="category_art">Art &amp; Exhibition</string>
     <string name="category_tech">Tech &amp; Innovation</string>
@@ -31,6 +30,9 @@
     <string name="category_business">Networking &amp; Business</string>
     <string name="category_lifestyle">Lifestyle &amp; Hobbies</string>
     <string name="category_diverse">Diverse</string>
+
+    <!-- Event List -->
+    <string name="event_list_screen_title">Event List</string>
     <string name="search_button_description">Search an event</string>
     <string name="sort_button_description">Sort events</string>
     <string name="close_sort_description">Close sort panel</string>
@@ -46,6 +48,9 @@
     <string name="remove_date_filter_description">Remove date filter</string>
     <string name="remove_category_filter_description">Remove category filter</string>
     <string name="on_event_click_label">See event details</string>
+
+    <!-- Event Detail -->
+    <string name="date_time_description">%1$s at %2$s</string>
 
 
 </resources>
