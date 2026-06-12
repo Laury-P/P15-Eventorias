@@ -42,6 +42,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true // Permet de générer les classes qui permettent d'acceder à l'API Key dans local.properties
     }
 
     packaging {
@@ -121,4 +122,8 @@ dependencies {
 
     // Requis pour inspecter l'arborescence Compose pendant les tests d'UI
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+secrets {
+    defaultPropertiesFileName = "local.properties"
 }

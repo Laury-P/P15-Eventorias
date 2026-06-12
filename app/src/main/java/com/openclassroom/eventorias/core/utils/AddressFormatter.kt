@@ -1,15 +1,13 @@
 package com.openclassroom.eventorias.core.utils
 
-fun String.toFormattedAddress() : String {
-    val parts = split(",").map { it.trim() }
+import com.openclassroom.eventorias.BuildConfig
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
-    return if (parts.size >= 3) {
-        """
-        ${parts[0]},
-        ${parts[1]},
-        ${parts.drop(2).joinToString(", ")}
-        """.trimIndent()
-    } else {
-        this
-    }
+fun String.toAPIUrl(zoom : Int = 13, size : String = "340x144", mapType: String = "roadmap") : String {
+    val apiKey = BuildConfig.MAPS_API_KEY
+
+    val encodedAddress = URLEncoder.encode(this, StandardCharsets.UTF_8.toString())
+
+    return "https://maps.googleapis.com/maps/api/staticmap?center=$encodedAddress&zoom=$zoom&size=$size&maptype=$mapType&markers=color:red%7C$encodedAddress&key=$apiKey"
 }
