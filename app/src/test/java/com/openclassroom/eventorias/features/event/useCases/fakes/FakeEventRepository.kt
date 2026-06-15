@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.map
 class FakeEventRepository : EventRepository {
 
     private val events = MutableStateFlow<List<Event>>(emptyList())
-
     private val participants = MutableStateFlow<Map<String, List<String>>>(emptyMap())
 
     fun emitEvents(newEvents: List<Event>) {
@@ -25,17 +24,31 @@ class FakeEventRepository : EventRepository {
         return events
     }
 
-    override fun getEventById(eventId: String): Flow<Event?> {
-        return events.map { list -> list.find { it.id == eventId } }
+    override fun getEventById(id: String): Flow<Event?> {
+        return events.map { list -> list.find { it.id == id } }
     }
 
     override fun getParticipantsList(eventId: String): Flow<List<String>> {
         return participants.map { map -> map[eventId] ?: emptyList() }
     }
 
+    var lastSavedStatus: Boolean? = null
+    var lastSavedEventId: String? = null
+    var lastSavedUserId: String? = null
+    var shouldReturnFailure = false
+
     override suspend fun setParticipationStatus(
         newStatus: Boolean,
         userId: String,
         eventId: String
-    ): Result<Unit> = Result.success(Unit)
+    ): Result<Unit> {
+        if (shouldReturnFailure) {
+            return Result.failure(Exception("Firebase Error"))
+        }
+        lastSavedStatus = newStatus
+        lastSavedUserId = userId
+        lastSavedEventId = eventId
+
+        return Result.success(Unit)
+    }
 }

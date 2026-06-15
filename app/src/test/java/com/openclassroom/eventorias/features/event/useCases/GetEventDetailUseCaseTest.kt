@@ -115,6 +115,33 @@ class GetEventDetailUseCaseTest {
                 cancelAndIgnoreRemainingEvents()
             }
         }
+
+    @Test
+    fun `when promoter does not exist, returns success with empty promoterUrl`() = runTest {
+        // 1. ARRANGE
+        val eventId = "event_123"
+        val fakeEvent = Event(
+            id = eventId,
+            title = "Tech Party",
+            promoterId = "unknown_promoter",
+            description = "",
+            photoUrl = "",
+            dateTime = LocalDateTime.now(),
+            location = ""
+        )
+
+        fakeEventRepository.emitEvents(listOf(fakeEvent))
+
+        // 2. ACT & ASSERT
+        useCase(eventId).test {
+            val result = awaitItem()
+            val uiModel = result.getOrNull()!!
+
+            assertEquals("", uiModel.promoterUrl)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
 }
 
 
