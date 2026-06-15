@@ -1,4 +1,4 @@
-package com.openclassroom.eventorias.features.event.useCases.fakes
+package com.openclassroom.eventorias.features.event.fakes
 
 import com.openclassroom.eventorias.core.domain.repository.AuthRepository
 

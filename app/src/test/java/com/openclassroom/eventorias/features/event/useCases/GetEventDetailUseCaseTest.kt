@@ -3,9 +3,9 @@ package com.openclassroom.eventorias.features.event.useCases
 import app.cash.turbine.test
 import com.openclassroom.eventorias.core.domain.model.Event
 import com.openclassroom.eventorias.core.domain.model.User
-import com.openclassroom.eventorias.features.event.useCases.fakes.FakeAuthRepository
-import com.openclassroom.eventorias.features.event.useCases.fakes.FakeEventRepository
-import com.openclassroom.eventorias.features.event.useCases.fakes.FakeUserRepository
+import com.openclassroom.eventorias.features.event.fakes.FakeAuthRepository
+import com.openclassroom.eventorias.features.event.fakes.FakeEventRepository
+import com.openclassroom.eventorias.features.event.fakes.FakeUserRepository
 import com.openclassroom.eventorias.features.events.usecases.GetEventDetailUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -138,6 +138,46 @@ class GetEventDetailUseCaseTest {
             val uiModel = result.getOrNull()!!
 
             assertEquals("", uiModel.promoterUrl)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `when participants list updates, useCase emits new updated data`() = runTest {
+        // ARRANGEMENT INITIAL
+        val eventId = "event_123"
+        val userId = "user_456"
+        val fakeEvent = Event(
+            id = eventId,
+            title = "Tech Party",
+            promoterId = "p_789",
+            description = "",
+            photoUrl = "",
+            dateTime = LocalDateTime.now(),
+            location = ""
+        )
+
+        fakeEventRepository.emitEvents(listOf(fakeEvent))
+        fakeEventRepository.emitParticipants(
+            eventId,
+            listOf("other_user")
+        ) // 1 seul participant au début
+        fakeAuthRepository.currentUserId = userId
+
+        useCase(eventId).test {
+            // 1. Premier élément : 1 seul participant, l'utilisateur ne participe pas
+            val firstResult = awaitItem().getOrNull()!!
+            assertEquals(1, firstResult.nbrOfParticipants)
+            assertEquals(false, firstResult.isUserParticipating)
+
+            // ACT :
+            fakeEventRepository.emitParticipants(eventId, listOf("other_user", userId))
+
+            // ASSERT
+            val secondResult = awaitItem().getOrNull()!!
+            assertEquals(2, secondResult.nbrOfParticipants)
+            assertEquals(true, secondResult.isUserParticipating)
 
             cancelAndIgnoreRemainingEvents()
         }
