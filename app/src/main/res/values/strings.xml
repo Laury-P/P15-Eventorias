@@ -59,5 +59,8 @@
         <item quantity="one">%1$d is going</item>
         <item quantity="other">%1$d are going</item>
     </plurals>
+    <string name="share_event_button_description">Share this event</string>
+    <string name="share_event_chooser_title">Share this event via</string>
+    <string name="share_message">You have been invited to %1$s : %2$s</string>
 
 </resources>

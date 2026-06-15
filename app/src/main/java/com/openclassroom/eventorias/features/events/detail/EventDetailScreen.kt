@@ -1,5 +1,7 @@
 package com.openclassroom.eventorias.features.events.detail
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +17,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,10 +30,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -44,12 +51,17 @@ import com.openclassroom.eventorias.features.events.detail.model.DetailEventUiSt
 import com.openclassroom.eventorias.features.events.eventList.component.LoadingComponent
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.annotation.parameters.DeepLink
 import com.ramcosta.composedestinations.generated.destinations.EventListScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination<RootGraph>
+@Destination<RootGraph>(
+    deepLinks = [
+        DeepLink(uriPattern = "eventorias://details/{eventId}")
+    ]
+)
 @Composable
 fun EventDetailScreen(
     eventId: String,
@@ -75,7 +87,8 @@ fun EventDetailScreen(
                     text = stringResource(R.string.event_not_found),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground)
+                    color = MaterialTheme.colorScheme.onBackground
+                )
             }
         }
 
@@ -84,6 +97,8 @@ fun EventDetailScreen(
             val promoterAvatar = currentState.eventDetail.promoterUrl
             val isUserParticipating = currentState.eventDetail.isUserParticipating
             val nbrOfParticipants = currentState.eventDetail.nbrOfParticipants
+
+            val context = LocalContext.current
 
             Scaffold(
                 modifier = modifier,
@@ -110,10 +125,21 @@ fun EventDetailScreen(
                                     contentDescription = stringResource(R.string.back_button),
                                 )
                             }
+                        },
+                        actions = {
+                            IconButton(onClick = { shareEvent(event.id, context, event.title) }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Share,
+                                    contentDescription = stringResource(R.string.share_event_button_description)
+                                )
+
+                            }
                         }
                     )
-                }
-            ) { innerPadding ->
+                },
+
+                ) { innerPadding ->
                 Column(
                     modifier = Modifier
                         .padding(innerPadding)
@@ -157,7 +183,12 @@ fun EventDetailScreen(
                     ParticipationItem(
                         nbrOfParticipant = nbrOfParticipants,
                         isUserParticipating = isUserParticipating,
-                        onSwitchClicked = { viewModel.setUserParticipation(!isUserParticipating, event.id) }
+                        onSwitchClicked = {
+                            viewModel.setUserParticipation(
+                                !isUserParticipating,
+                                event.id
+                            )
+                        }
                     )
 
                     AddressItem(
@@ -168,6 +199,19 @@ fun EventDetailScreen(
         }
 
     }
+}
 
+private fun shareEvent(eventId: String, context: Context, eventTitle: String) {
+    val deepLink = "eventorias://details/${eventId}"
 
+    val shareMessage = context.getString(R.string.share_message, eventTitle, deepLink)
+    val sendIntent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, shareMessage)
+        type = "text/plain"
+    }
+
+    val chooserTitle = context.getString(R.string.share_event_chooser_title)
+    val shareIntent = Intent.createChooser(sendIntent, chooserTitle)
+    context.startActivity(shareIntent)
 }
