@@ -5,6 +5,6 @@ import com.openclassroom.eventorias.core.domain.model.Event
 data class DetailEventUiModel(
     val event: Event,
     val promoterUrl : String,
-    val nbrOfParticipants : Int = 11, // TODO a implementer
+    val nbrOfParticipants : Int,
     val isUserParticipating : Boolean = false // TODO a implementer
 )

@@ -54,5 +54,10 @@
     <string name="back_button">Back to the list</string>
     <string name="event_not_found"> This event could not be found. You will be redirected shortly.</string>
     <string name="map_description">Map to the event</string>
+    <string name="switch_label">Will you attend? </string>
+    <plurals name="attendees_counter">
+        <item quantity="one">%1$d is going</item>
+        <item quantity="other">%1$d are going</item>
+    </plurals>
 
 </resources>

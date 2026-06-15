@@ -39,6 +39,7 @@ import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
 import com.openclassroom.eventorias.features.events.detail.component.AddressItem
 import com.openclassroom.eventorias.features.events.detail.component.DateTimeItem
+import com.openclassroom.eventorias.features.events.detail.component.ParticipationItem
 import com.openclassroom.eventorias.features.events.detail.model.DetailEventUiState
 import com.openclassroom.eventorias.features.events.eventList.component.LoadingComponent
 import com.ramcosta.composedestinations.annotation.Destination
@@ -81,6 +82,8 @@ fun EventDetailScreen(
         is DetailEventUiState.Success -> {
             val event = currentState.eventDetail.event
             val promoterAvatar = currentState.eventDetail.promoterUrl
+            val isUserParticipating = currentState.eventDetail.isUserParticipating
+            val nbrOfParticipants = currentState.eventDetail.nbrOfParticipants
 
             Scaffold(
                 modifier = modifier,
@@ -151,8 +154,13 @@ fun EventDetailScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
+                    ParticipationItem(
+                        nbrOfParticipant = nbrOfParticipants,
+                        isUserParticipating = isUserParticipating,
+                        onSwitchClicked = { viewModel.setUserParticipation(!isUserParticipating, event.id) }
+                    )
+
                     AddressItem(
-                        modifier = Modifier.padding(top = dims.padding24),
                         address = event.location
                     )
                 }
