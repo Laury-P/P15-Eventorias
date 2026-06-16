@@ -101,6 +101,7 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "a
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-espresso_intent = {group = "androidx.test.espresso", name = "espresso-intents", version.ref = "androidxEspresso"}
 
 # --- Outils d'aide aux tests (Communs) ---
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }

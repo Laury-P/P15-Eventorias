@@ -45,6 +45,7 @@ import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
 import com.openclassroom.eventorias.features.events.detail.component.AddressItem
 import com.openclassroom.eventorias.features.events.detail.component.DateTimeItem
 import com.openclassroom.eventorias.features.events.detail.component.ParticipationItem
+import com.openclassroom.eventorias.features.events.detail.model.DetailEventUiModel
 import com.openclassroom.eventorias.features.events.detail.model.DetailEventUiState
 import com.openclassroom.eventorias.features.events.eventList.component.LoadingComponent
 import com.ramcosta.composedestinations.annotation.Destination
@@ -54,7 +55,6 @@ import com.ramcosta.composedestinations.generated.destinations.EventListScreenDe
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>(
     deepLinks = [
         DeepLink(uriPattern = "eventorias://details/{eventId}")
@@ -62,19 +62,17 @@ import kotlinx.coroutines.delay
 )
 @Composable
 fun EventDetailScreen(
-    eventId: String,
+    @Suppress("unused") eventId: String,
     navigator: DestinationsNavigator,
     modifier: Modifier = Modifier,
     viewModel: EventDetailViewModel = hiltViewModel()
 ) {
     val detailState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    val dims = EventoriasTheme.dimensions
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
-            when(effect) {
+            when (effect) {
                 is EventDetailViewModel.DetailEffect.ShowError -> {
                     Toast.makeText(context, effect.message, Toast.LENGTH_LONG).show()
                 }
@@ -101,115 +99,125 @@ fun EventDetailScreen(
                 )
             }
         }
-
         is DetailEventUiState.Success -> {
-            val event = currentState.eventDetail.event
-            val promoterAvatar = currentState.eventDetail.promoterUrl
-            val isUserParticipating = currentState.eventDetail.isUserParticipating
-            val nbrOfParticipants = currentState.eventDetail.nbrOfParticipants
-
-            val context = LocalContext.current
-
-            Scaffold(
-                modifier = modifier,
-                topBar = {
-                    TopAppBar(
-                        title = {
-                            Text(
-                                text = event.title,
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                        },
-                        windowInsets = WindowInsets(0, 0, 0, 0),
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.background,
-                            titleContentColor = MaterialTheme.colorScheme.onBackground,
-                            actionIconContentColor = MaterialTheme.colorScheme.onBackground,
-                        ),
-                        navigationIcon = {
-                            IconButton(
-                                onClick = { navigator.popBackStack() }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = stringResource(R.string.back_button),
-                                )
-                            }
-                        },
-                        actions = {
-                            IconButton(onClick = { shareEvent(event.id, context, event.title) }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Share,
-                                    contentDescription = stringResource(R.string.share_event_button_description)
-                                )
-
-                            }
-                        }
-                    )
-                },
-
-                ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .padding(horizontal = dims.padding24)
-                        .verticalScroll(rememberScrollState())
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(dims.padding24)
-                ) {
-                    AsyncImage(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f)
-                            .clip(MaterialTheme.shapes.medium),
-                        model = event.photoUrl,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop
-                    )
-
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        DateTimeItem(dateTime = event.dateTime)
-                        AsyncImage(
-                            modifier = Modifier
-                                .size(dims.avatarDetail)
-                                .clip(CircleShape),
-                            model = promoterAvatar,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-
-                    Text(
-                        text = event.description,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    ParticipationItem(
-                        nbrOfParticipant = nbrOfParticipants,
-                        isUserParticipating = isUserParticipating,
-                        onSwitchClicked = {
-                            viewModel.setUserParticipation(
-                                !isUserParticipating,
-                                event.id
-                            )
-                        }
-                    )
-
-                    AddressItem(
-                        address = event.location
-                    )
-                }
-            }
+            EventDetailContent(
+                modifier,
+                context,
+                eventDetail = currentState.eventDetail,
+                onSwitchClicked = { status, id ->  viewModel.setUserParticipation(status, id) },
+                onNavBack = {navigator.popBackStack()}
+            )
         }
-
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EventDetailContent(
+    modifier: Modifier,
+    context: Context,
+    eventDetail: DetailEventUiModel,
+    onSwitchClicked: (Boolean, String) -> Unit,
+    onNavBack: () -> Unit,
+) {
+    val event = eventDetail.event
+    val promoterAvatar = eventDetail.promoterUrl
+    val isUserParticipating = eventDetail.isUserParticipating
+    val nbrOfParticipants = eventDetail.nbrOfParticipants
+    val dims = EventoriasTheme.dimensions
+
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = event.title,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
+                windowInsets = WindowInsets(0, 0, 0, 0),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground,
+                    actionIconContentColor = MaterialTheme.colorScheme.onBackground,
+                ),
+                navigationIcon = {
+                    IconButton(
+                        onClick = { onNavBack() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back_button),
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { shareEvent(event.id, context, event.title) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = stringResource(R.string.share_event_button_description)
+                        )
+
+                    }
+                }
+            )
+        },
+        ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(horizontal = dims.padding24)
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(dims.padding24)
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .clip(MaterialTheme.shapes.medium),
+                model = event.photoUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                DateTimeItem(dateTime = event.dateTime)
+                AsyncImage(
+                    modifier = Modifier
+                        .size(dims.avatarDetail)
+                        .clip(CircleShape),
+                    model = promoterAvatar,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
+            }
+
+            Text(
+                text = event.description,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            ParticipationItem(
+                nbrOfParticipant = nbrOfParticipants,
+                isUserParticipating = isUserParticipating,
+                onSwitchClicked = { onSwitchClicked(!isUserParticipating, event.id) }
+            )
+
+            AddressItem(
+                address = event.location
+            )
+        }
+    }
+}
+
 
 private fun shareEvent(eventId: String, context: Context, eventTitle: String) {
     val deepLink = "eventorias://details/${eventId}"
@@ -222,6 +230,8 @@ private fun shareEvent(eventId: String, context: Context, eventTitle: String) {
     }
 
     val chooserTitle = context.getString(R.string.share_event_chooser_title)
-    val shareIntent = Intent.createChooser(sendIntent, chooserTitle)
+    val shareIntent = Intent.createChooser(sendIntent, chooserTitle).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
     context.startActivity(shareIntent)
 }

@@ -119,6 +119,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.androidx.espresso.intent)
 
     // Requis pour inspecter l'arborescence Compose pendant les tests d'UI
     debugImplementation(libs.androidx.compose.ui.test.manifest)
