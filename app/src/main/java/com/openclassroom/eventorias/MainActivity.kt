@@ -14,6 +14,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
@@ -60,7 +61,7 @@ class MainActivity : ComponentActivity() {
                                             contentDescription = null
                                         )
                                     },
-                                    label = { Text("Events") }
+                                    label = { Text(stringResource(R.string.event_nav_button)) }
                                 )
 
                                 // Onglet Profile
@@ -73,7 +74,7 @@ class MainActivity : ComponentActivity() {
                                             contentDescription = null
                                         )
                                     },
-                                    label = { Text("Profile") }
+                                    label = { Text(stringResource(R.string.profile_nav_button)) }
                                 )
                             }
                     }
