@@ -9,7 +9,7 @@ import kotlinx.coroutines.tasks.await
 class FirebaseUserRepository @Inject constructor(private val firestore: FirebaseFirestore) :
     UserRepository {
 
-    override suspend fun getCurrentUser(userId: String): User? {
+    override suspend fun getUserById(userId: String): User? {
         val document = firestore.collection("users").document(userId).get().await()
         return document.toObject(User::class.java)
     }

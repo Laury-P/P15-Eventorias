@@ -14,11 +14,13 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
+import com.ramcosta.composedestinations.generated.destinations.AuthScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.EventListScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ProfileScreenDestination
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
@@ -60,7 +62,7 @@ class MainActivity : ComponentActivity() {
                                             contentDescription = null
                                         )
                                     },
-                                    label = { Text("Events") }
+                                    label = { Text(stringResource(R.string.event_nav_button)) }
                                 )
 
                                 // Onglet Profile
@@ -73,16 +75,17 @@ class MainActivity : ComponentActivity() {
                                             contentDescription = null
                                         )
                                     },
-                                    label = { Text("Profile") }
+                                    label = { Text(stringResource(R.string.profile_nav_button)) }
                                 )
                             }
                     }
 
                 ) { innerPadding ->
+                    val isAuthScreen = currentDestination == AuthScreenDestination
                     DestinationsNavHost(
                         navGraph = NavGraphs.root,
                         navController = navController,
-                        modifier = Modifier.padding (innerPadding)
+                        modifier = if (isAuthScreen) Modifier else Modifier.padding (innerPadding)
                     )
                 }
             }

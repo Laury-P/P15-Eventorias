@@ -31,6 +31,7 @@ import com.firebase.ui.auth.configuration.theme.AuthUIAsset
 import com.firebase.ui.auth.ui.screens.FirebaseAuthScreen
 import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.domain.model.User
+import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.AuthScreenDestination
@@ -40,6 +41,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination<RootGraph>(start = true)
 @Composable
 fun AuthScreen(navigator: DestinationsNavigator) {
+    val dims = EventoriasTheme.dimensions
     val context = LocalContext.current
     val configuration = authUIConfiguration {
         this.logo = AuthUIAsset.Resource(R.drawable.logo_eventorias)
@@ -69,7 +71,7 @@ fun AuthScreen(navigator: DestinationsNavigator) {
     }
 
     FirebaseAuthScreen(
-        modifier = Modifier,
+        modifier = Modifier.padding(top = dims.logScreenPadding),
         configuration = configuration,
         onSignInSuccess = { _ ->
             navigator.navigate(EventListScreenDestination()) {
