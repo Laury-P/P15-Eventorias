@@ -33,6 +33,7 @@ import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.domain.model.User
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.AuthScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.EventListScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -57,10 +58,12 @@ fun AuthScreen(navigator: DestinationsNavigator) {
                     minimumPasswordLength = 6,
                 )
             )
-            provider(AuthProvider.Google(
-                serverClientId = "806226545135-p2nifuc8ennk3a6feuqt0k6qvsg7m6vt.apps.googleusercontent.com",
-                scopes = emptyList(),
-            ))
+            provider(
+                AuthProvider.Google(
+                    serverClientId = "806226545135-p2nifuc8ennk3a6feuqt0k6qvsg7m6vt.apps.googleusercontent.com",
+                    scopes = emptyList(),
+                )
+            )
         }
         isMfaEnabled = false
     }
@@ -68,7 +71,11 @@ fun AuthScreen(navigator: DestinationsNavigator) {
     FirebaseAuthScreen(
         modifier = Modifier,
         configuration = configuration,
-        onSignInSuccess = { _ -> navigator.navigate(EventListScreenDestination()) },
+        onSignInSuccess = { _ ->
+            navigator.navigate(EventListScreenDestination()) {
+                popUpTo(AuthScreenDestination) { inclusive = true }
+            }
+        },
         onSignInFailure = { _ -> }, // Gerer par FirebaseUi par un popUp
         onSignInCancelled = {},
         authenticatedContent = { state, _ ->
@@ -83,7 +90,9 @@ fun AuthScreen(navigator: DestinationsNavigator) {
                     uid = user.uid,
                     displayName = user.displayName ?: "",
                     email = user.email ?: "",
-                    onUserReady = { navigator.navigate(EventListScreenDestination()) })
+                    onUserReady = { navigator.navigate(EventListScreenDestination()) {
+                        popUpTo(AuthScreenDestination) {inclusive = true}
+                    } })
             } else {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -196,7 +205,9 @@ fun ProfileCompletionScreen(
             enabled = firstname.isNotBlank() && lastname.isNotBlank(),
         ) {
             Text(
-                if (state is UiState.Error) stringResource(R.string.retry_button) else stringResource(R.string.save_button)
+                if (state is UiState.Error) stringResource(R.string.retry_button) else stringResource(
+                    R.string.save_button
+                )
             )
         }
     }

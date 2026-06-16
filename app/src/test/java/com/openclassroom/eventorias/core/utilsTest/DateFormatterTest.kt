@@ -1,7 +1,7 @@
 package com.openclassroom.eventorias.core.utilsTest
 
 
-import com.openclassroom.eventorias.core.utils.toFormattedString
+import com.openclassroom.eventorias.core.utils.toFormattedDateString
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -37,7 +37,7 @@ class DateFormatterTest {
     fun `given a local date time, when formatting, then returns english formatted string`(date: LocalDateTime, expected:String) {
 
         // WHEN
-        val result = date.toFormattedString()
+        val result = date.toFormattedDateString()
 
         // THEN
         assertEquals(expected, result)
@@ -48,7 +48,7 @@ class DateFormatterTest {
     fun `given a local date, when formatting, then returns english formatted string`(date: LocalDate, expected:String) {
 
         // WHEN
-        val result = date.toFormattedString()
+        val result = date.toFormattedDateString()
 
         // THEN
         assertEquals(expected, result)

@@ -11,5 +11,4 @@ data class Event(
     val category : EventCategory = EventCategory.DIVERSE,
     val photoUrl : String = "",
     val promoterId : String = "", // ID of the User that create the event.
-    val participantIds : List<String> = emptyList()
 )

@@ -10,6 +10,7 @@ import com.openclassroom.eventorias.core.domain.repository.EventRepository
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -18,7 +19,7 @@ class FirebaseEventRepository @Inject constructor(private val firestore: Firebas
     override fun getListEvent(): Flow<List<Event>> {
         val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         return firestore.collection("events")
-            .whereGreaterThanOrEqualTo("dateTime",today)
+            .whereGreaterThanOrEqualTo("dateTime", today)
             .orderBy("dateTime", Query.Direction.ASCENDING)
             .snapshots()
             .map { snapshots ->
@@ -27,4 +28,38 @@ class FirebaseEventRepository @Inject constructor(private val firestore: Firebas
                 }
             }
     }
+
+    override fun getEventById(id: String): Flow<Event?> {
+        return firestore.collection("events")
+            .document(id)
+            .snapshots()
+            .map { documentSnapshot ->
+                documentSnapshot.toObject(EventDto::class.java)?.toDomain()
+            }
+    }
+
+    override suspend fun setParticipationStatus(
+        newStatus: Boolean,
+        userId: String,
+        eventId: String
+    ): Result<Unit> = runCatching {
+        if (newStatus) {
+            val data = mapOf("participantId" to userId)
+            firestore.collection("events").document(eventId)
+                .collection("participants").document(userId).set(data).await()
+        } else {
+            firestore.collection("events").document(eventId)
+                .collection("participants").document(userId).delete().await()
+        }
+    }
+
+    override fun getParticipantsList(eventId: String): Flow<List<String>> {
+        return firestore.collection("events").document(eventId).collection("participants")
+            .snapshots().map { querySnapshots ->
+                querySnapshots.documents.map { documentSnapshot ->
+                    documentSnapshot.id
+                }
+            }
+    }
+
 }

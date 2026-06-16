@@ -44,7 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
-import com.openclassroom.eventorias.core.utils.toFormattedString
+import com.openclassroom.eventorias.core.utils.toFormattedDateString
 import com.openclassroom.eventorias.features.events.eventList.component.CustomSearchBar
 import com.openclassroom.eventorias.features.events.eventList.component.ErrorScreen
 import com.openclassroom.eventorias.features.events.eventList.component.EventItem
@@ -53,6 +53,7 @@ import com.openclassroom.eventorias.features.events.eventList.component.LoadingC
 import com.openclassroom.eventorias.features.events.eventList.model.ListEventUiState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.EventDetailScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -199,7 +200,7 @@ fun EventListScreen(
                                 FilterChip(
                                     selected = true,
                                     onClick = { viewModel.setDateFilter(null) },
-                                    label = { Text(it.toFormattedString()) },
+                                    label = { Text(it.toFormattedDateString()) },
                                     trailingIcon = {
                                         Icon(
                                             imageVector = Icons.Default.Close,
@@ -241,8 +242,11 @@ fun EventListScreen(
                         }
                     } else {
                         LazyColumn {
-                            items(list) { event ->
-                                EventItem(uiEvent = event, onEventClick = { TODO() })
+                            items(list) { uiEvent ->
+                                val eventID = uiEvent.event.id
+                                EventItem(uiEvent = uiEvent, onEventClick = { navigator.navigate(
+                                    EventDetailScreenDestination(eventId = eventID)
+                                ) })
                             }
                         }
                     }
