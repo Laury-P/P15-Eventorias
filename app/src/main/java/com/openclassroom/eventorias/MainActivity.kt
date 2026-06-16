@@ -20,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
+import com.ramcosta.composedestinations.generated.destinations.AuthScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.EventListScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ProfileScreenDestination
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
@@ -80,10 +81,11 @@ class MainActivity : ComponentActivity() {
                     }
 
                 ) { innerPadding ->
+                    val isAuthScreen = currentDestination == AuthScreenDestination
                     DestinationsNavHost(
                         navGraph = NavGraphs.root,
                         navController = navController,
-                        modifier = Modifier.padding (innerPadding)
+                        modifier = if (isAuthScreen) Modifier else Modifier.padding (innerPadding)
                     )
                 }
             }
