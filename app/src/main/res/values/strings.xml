@@ -14,6 +14,7 @@
     <string name="cancel_button">Cancel</string>
     <string name="event_nav_button">Events</string>
     <string name="profile_nav_button">Profile</string>
+    <string name="add_event_button">Validate</string>
 
     <!-- Auth -->
     <string name="profile_completion_title">Profile creation for: %1$s</string>
@@ -64,5 +65,21 @@
     <string name="share_event_button_description">Share this event</string>
     <string name="share_event_chooser_title">Share this event via</string>
     <string name="share_message">You have been invited to %1$s : %2$s</string>
+
+    <!-- Add Event -->
+    <string name="add_screen_title">Creation of an event</string>
+    <string name="title_label">Title</string>
+    <string name="title_placeholder">New event</string>
+    <string name="description_label">Description</string>
+    <string name="description_placeholder">Tap here to enter your description</string>
+    <string name="date_label">Date</string>
+    <string name="date_placeholder">MM/DD/YYYY</string>
+    <string name="time_label">Time</string>
+    <string name="time_placeholder">HH:MM</string>
+    <string name="address_label">Address</string>
+    <string name="address_placeholder">Enter full address</string>
+    <string name="take_photo_description">Take a photo</string>
+    <string name="select_from_gallery_description">Select from gallery</string>
+
 
 </resources>

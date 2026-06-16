@@ -11,6 +11,7 @@ data class EventoriasDimensions(
     val padding16 : Dp,
     val padding20 : Dp,
     val padding24 : Dp,
+    val padding48 : Dp,
     val logScreenPadding : Dp,
     val avatarEventList : Dp,
     val avatarDetail : Dp,
@@ -28,6 +29,7 @@ val compactDimensions = EventoriasDimensions(
     padding20 = 20.dp,
     // Event list: Horizontal Padding
     padding24 = 24.dp,
+    padding48 = 48.dp,
     logScreenPadding = 50.dp,
     avatarEventList = 40.dp,
     avatarDetail = 60.dp,
