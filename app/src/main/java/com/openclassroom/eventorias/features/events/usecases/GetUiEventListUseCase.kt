@@ -7,7 +7,6 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import okhttp3.internal.ignoreIoExceptions
 
 class GetUiEventListUseCase @Inject constructor(
     private val eventRepository: EventRepository,
@@ -17,7 +16,7 @@ class GetUiEventListUseCase @Inject constructor(
         return eventRepository.getListEvent()
             .map { eventList ->
                 val uiList = eventList.map { event ->
-                    val promoter = userRepository.getCurrentUser(event.promoterId)
+                    val promoter = userRepository.getUserById(event.promoterId)
                     val promoterURL = promoter?.avatar ?: ""
                     ListEventUiModel(event = event, promoterAvatarUrl = promoterURL)
                 }

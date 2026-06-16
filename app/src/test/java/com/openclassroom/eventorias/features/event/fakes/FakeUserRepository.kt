@@ -6,7 +6,7 @@ import com.openclassroom.eventorias.core.domain.repository.UserRepository
 class FakeUserRepository : UserRepository{
     private val users = mutableMapOf<String, User>()
 
-    override suspend fun getCurrentUser(userId: String): User? {
+    override suspend fun getUserById(userId: String): User? {
         return users[userId]
     }
 

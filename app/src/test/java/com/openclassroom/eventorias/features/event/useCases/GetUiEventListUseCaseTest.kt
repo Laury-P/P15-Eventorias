@@ -30,7 +30,7 @@ class GetUiEventListUseCaseTest {
         val fakeUser = User(id = "promoter_A", avatar = "https://url_de_l_avatar.png")
 
         every { eventRepository.getListEvent() } returns flowOf(listOf(fakeEvent))
-        coEvery { userRepository.getCurrentUser("promoter_A") } returns fakeUser
+        coEvery { userRepository.getUserById("promoter_A") } returns fakeUser
 
         // WHEN :
         val result = useCase().first()

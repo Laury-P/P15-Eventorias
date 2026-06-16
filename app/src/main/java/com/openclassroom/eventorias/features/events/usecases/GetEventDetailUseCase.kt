@@ -26,7 +26,7 @@ class GetEventDetailUseCase @Inject constructor(
                 )
             }
 
-            val promoter = userRepository.getCurrentUser(event.promoterId)
+            val promoter = userRepository.getUserById(event.promoterId)
             val promoterURL = promoter?.avatar ?: ""
 
             val isUserParticipating = participantsList.contains(currentUserId)

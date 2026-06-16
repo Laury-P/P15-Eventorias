@@ -42,7 +42,7 @@ class AuthViewModelTest {
         fun `when user does not exist should emit NewUser`() = runTest {
             // Arrange
             val uid = "user_123"
-            coEvery { userRepository.getCurrentUser(uid) } returns null
+            coEvery { userRepository.getUserById(uid) } returns null
 
             // Act
             viewModel.checkNewUser(uid)
@@ -50,7 +50,7 @@ class AuthViewModelTest {
 
             // Assert
             assertEquals(UiState.NewUser, viewModel.uiState.value)
-            coVerify(exactly = 1) { userRepository.getCurrentUser(uid) }
+            coVerify(exactly = 1) { userRepository.getUserById(uid) }
         }
 
         @Test
@@ -58,7 +58,7 @@ class AuthViewModelTest {
             // Arrange
             val uid = "user_123"
             val mockUser = mockk<User>()
-            coEvery { userRepository.getCurrentUser(uid) } returns mockUser
+            coEvery { userRepository.getUserById(uid) } returns mockUser
 
             // Act
             viewModel.checkNewUser(uid)
@@ -66,7 +66,7 @@ class AuthViewModelTest {
 
             // Assert
             assertEquals(UiState.UserReady, viewModel.uiState.value)
-            coVerify(exactly = 1) { userRepository.getCurrentUser(uid) }
+            coVerify(exactly = 1) { userRepository.getUserById(uid) }
         }
     }
 

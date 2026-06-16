@@ -18,7 +18,7 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
 
     fun checkNewUser(uid : String) {
         viewModelScope.launch {
-            val user = userRepository.getCurrentUser(uid)
+            val user = userRepository.getUserById(uid)
             _uiState.value = if(user == null) UiState.NewUser else UiState.UserReady
         }
     }
