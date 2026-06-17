@@ -33,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
+import com.openclassroom.eventorias.features.events.add.component.CategorySelector
 import com.openclassroom.eventorias.features.events.detail.FormEvent
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -130,6 +131,11 @@ fun AddEventScreen(
                     label = { Text(stringResource(R.string.address_label)) },
                     placeholder = { Text(stringResource(R.string.address_placeholder)) },
                     shape = MaterialTheme.shapes.small
+                )
+
+                CategorySelector(
+                    selectedCategory = newEvent.category,
+                    onCategorySelected = {viewModel.onAction(FormEvent.CategoryChanged(it))},
                 )
 
                 Row(

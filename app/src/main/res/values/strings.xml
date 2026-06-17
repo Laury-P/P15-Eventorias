@@ -80,6 +80,7 @@
     <string name="address_placeholder">Enter full address</string>
     <string name="take_photo_description">Take a photo</string>
     <string name="select_from_gallery_description">Select from gallery</string>
+    <string name="category_label">Category</string>
 
 
 </resources>
