@@ -119,11 +119,45 @@ fun AddEventScreen(
             navigator.navigate(EventListScreenDestination)
         }
     }
+    if (isPublishing is IsPublishing.Publishing) LoadingComponent()
 
     //TODO Améliorer gestion d'erreur
 
-    if (isPublishing is IsPublishing.Publishing) LoadingComponent()
+    AddEventContent(
+        modifier = modifier,
+        onNavBack = { navigator.popBackStack() },
+        newEvent = newEvent,
+        isPublishing = isPublishing,
+        onAction = viewModel::onAction,
+        onPhotoClick = {
+            val permissionCheck = ContextCompat.checkSelfPermission(
+                context,
+                permission.CAMERA
+            )
+            if (permissionCheck == PackageManager.PERMISSION_GRANTED) launchCameraIntent()
+            else cameraPermissions.launch(permission.CAMERA)
+        },
+        onGalleryClick = {
+            pickMedia.launch(
+                PickVisualMediaRequest(
+                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                )
+            )
+        }
+    )
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddEventContent(
+    modifier: Modifier = Modifier,
+    onNavBack: () -> Unit,
+    newEvent: NewUiEvent,
+    isPublishing: IsPublishing,
+    onAction: (FormEvent) -> Unit,
+    onGalleryClick: () -> Unit,
+    onPhotoClick: () -> Unit
+) {
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -142,7 +176,7 @@ fun AddEventScreen(
                 ),
                 navigationIcon = {
                     IconButton(
-                        onClick = { navigator.popBackStack() }
+                        onClick = { onNavBack() }
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -171,7 +205,7 @@ fun AddEventScreen(
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = newEvent.title,
-                    onValueChange = { viewModel.onAction(FormEvent.TitleChanged(it)) },
+                    onValueChange = { onAction(FormEvent.TitleChanged(it)) },
                     label = { Text(stringResource(R.string.title_label)) },
                     placeholder = { Text(stringResource(R.string.title_placeholder)) },
                     shape = MaterialTheme.shapes.small,
@@ -181,7 +215,7 @@ fun AddEventScreen(
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = newEvent.description,
-                    onValueChange = { viewModel.onAction(FormEvent.DescriptionChanged(it)) },
+                    onValueChange = { onAction(FormEvent.DescriptionChanged(it)) },
                     label = { Text(stringResource(R.string.description_label)) },
                     placeholder = { Text(stringResource(R.string.description_placeholder)) },
                     shape = MaterialTheme.shapes.small,
@@ -190,14 +224,14 @@ fun AddEventScreen(
                 DateTimeSelector(
                     date = newEvent.date,
                     time = newEvent.time,
-                    onDateSelected = { viewModel.onAction(FormEvent.DateChanged(it)) },
-                    onTimeSelected = { viewModel.onAction(FormEvent.TimeChanged(it)) }
+                    onDateSelected = { onAction(FormEvent.DateChanged(it)) },
+                    onTimeSelected = { onAction(FormEvent.TimeChanged(it)) }
                 )
 
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = newEvent.address,
-                    onValueChange = { viewModel.onAction(FormEvent.AddressChanged(it)) },
+                    onValueChange = { onAction(FormEvent.AddressChanged(it)) },
                     label = { Text(stringResource(R.string.address_label)) },
                     placeholder = { Text(stringResource(R.string.address_placeholder)) },
                     shape = MaterialTheme.shapes.small,
@@ -207,7 +241,7 @@ fun AddEventScreen(
 
                 CategorySelector(
                     selectedCategory = newEvent.category,
-                    onCategorySelected = { viewModel.onAction(FormEvent.CategoryChanged(it)) },
+                    onCategorySelected = { onAction(FormEvent.CategoryChanged(it)) },
                 )
 
                 Row(
@@ -218,12 +252,7 @@ fun AddEventScreen(
                 ) {
                     IconButton(
                         onClick = {
-                            val permissionCheck = ContextCompat.checkSelfPermission(
-                                context,
-                                permission.CAMERA
-                            )
-                            if (permissionCheck == PackageManager.PERMISSION_GRANTED) launchCameraIntent()
-                            else cameraPermissions.launch(permission.CAMERA)
+                            onPhotoClick()
                         },
                         colors = IconButtonColors(
                             contentColor = MaterialTheme.colorScheme.onSecondary,
@@ -241,11 +270,7 @@ fun AddEventScreen(
                     Spacer(modifier = Modifier.width(dims.padding16))
                     IconButton(
                         onClick = {
-                            pickMedia.launch(
-                                PickVisualMediaRequest(
-                                    ActivityResultContracts.PickVisualMedia.ImageOnly
-                                )
-                            )
+                            onGalleryClick()
                         },
                         colors = IconButtonColors(
                             contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -274,7 +299,7 @@ fun AddEventScreen(
             TextButton(
                 modifier = Modifier
                     .fillMaxWidth(),
-                onClick = { viewModel.onAction(FormEvent.OnSaveClicked) },
+                onClick = { onAction(FormEvent.OnSaveClicked) },
                 colors = ButtonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -291,10 +316,7 @@ fun AddEventScreen(
                         } else stringResource(R.string.add_event_button),
                 )
             }
-
-
         }
-
     }
 }
 
