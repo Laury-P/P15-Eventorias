@@ -1,5 +1,11 @@
 package com.openclassroom.eventorias.features.events.add
 
+import android.Manifest.permission
+import android.content.pm.PackageManager
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AttachFile
@@ -29,11 +37,19 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
 import com.openclassroom.eventorias.features.events.add.component.CategorySelector
@@ -45,6 +61,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.EventListScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -56,16 +73,56 @@ fun AddEventScreen(
 ) {
     val newEvent by viewModel.newEvent.collectAsStateWithLifecycle()
     val isPublishing by viewModel.isPublishing.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    val pickMedia =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                viewModel.onAction(FormEvent.PhotoSelected(uri))
+            }
+        }
+    val tempPhotoUri = remember { mutableStateOf<Uri?>(null) }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success)
+            tempPhotoUri.value?.let { uri ->
+                viewModel.onAction((FormEvent.PhotoSelected(uri)))
+            }
+    }
+
+    fun launchCameraIntent() {
+        val file = File.createTempFile(
+            "event_photo_",
+            ".jpg",
+            context.cacheDir
+        )
+        val uri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            file
+        )
+        tempPhotoUri.value = uri
+        cameraLauncher.launch(uri)
+    }
+
+    val cameraPermissions = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { isGranted ->
+        if (isGranted) launchCameraIntent()
+
+    }
 
     LaunchedEffect(isPublishing) {
-        if (isPublishing is IsPublishing.Published){
+        if (isPublishing is IsPublishing.Published) {
             navigator.navigate(EventListScreenDestination)
         }
     }
 
     //TODO Améliorer gestion d'erreur
 
-    if(isPublishing is IsPublishing.Publishing) LoadingComponent()
+    if (isPublishing is IsPublishing.Publishing) LoadingComponent()
 
     Scaffold(
         modifier = modifier,
@@ -105,7 +162,12 @@ fun AddEventScreen(
                 .padding(horizontal = dims.padding24),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(dims.padding24)) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(dims.padding24)
+            ) {
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = newEvent.title,
@@ -150,12 +212,19 @@ fun AddEventScreen(
 
                 Row(
                     modifier = Modifier
-                        .padding(top = dims.padding48)
+                        .padding(top = dims.padding24)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     IconButton(
-                        onClick = {},
+                        onClick = {
+                            val permissionCheck = ContextCompat.checkSelfPermission(
+                                context,
+                                permission.CAMERA
+                            )
+                            if (permissionCheck == PackageManager.PERMISSION_GRANTED) launchCameraIntent()
+                            else cameraPermissions.launch(permission.CAMERA)
+                        },
                         colors = IconButtonColors(
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                             containerColor = MaterialTheme.colorScheme.secondary,
@@ -171,7 +240,13 @@ fun AddEventScreen(
                     }
                     Spacer(modifier = Modifier.width(dims.padding16))
                     IconButton(
-                        onClick = {},
+                        onClick = {
+                            pickMedia.launch(
+                                PickVisualMediaRequest(
+                                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                                )
+                            )
+                        },
                         colors = IconButtonColors(
                             contentColor = MaterialTheme.colorScheme.onPrimary,
                             containerColor = MaterialTheme.colorScheme.primary,
@@ -186,8 +261,15 @@ fun AddEventScreen(
                         )
                     }
                 }
+                if (newEvent.pictureUri != null) {
+                    AsyncImage(
+                        model = newEvent.pictureUri,
+                        contentDescription = "Selected photo of the event",
+                        modifier = Modifier.clip(MaterialTheme.shapes.small),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
-
 
             TextButton(
                 modifier = Modifier
@@ -210,8 +292,11 @@ fun AddEventScreen(
                 )
             }
 
+
         }
 
     }
 }
+
+
 
