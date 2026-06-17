@@ -5,11 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassroom.eventorias.core.domain.model.EventCategory
 import com.openclassroom.eventorias.features.events.detail.FormEvent
+import com.openclassroom.eventorias.features.events.detail.IsPublishing
 import com.openclassroom.eventorias.features.events.usecases.AddEventUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -19,6 +21,9 @@ class AddEventViewModel @Inject constructor(private val addEventUseCase: AddEven
 
     private val _newEvent = MutableStateFlow(NewUiEvent())
     val newEvent: StateFlow<NewUiEvent> = _newEvent
+
+    private val _isPublishing = MutableStateFlow<IsPublishing>(IsPublishing.Idle)
+    val isPublishing = _isPublishing.asStateFlow()
 
     fun onAction(formEvent: FormEvent) {
         when (formEvent) {
@@ -57,9 +62,10 @@ class AddEventViewModel @Inject constructor(private val addEventUseCase: AddEven
     fun addEvent() {
         // todo add a method to check info.
         viewModelScope.launch{
+            _isPublishing.value = IsPublishing.Publishing
             addEventUseCase(newEvent.value)
-                .onSuccess { TODO( "send success et nav vers ecran de liste") }
-                .onFailure { TODO("send error et bouton retry") }
+                .onSuccess { _isPublishing.value = IsPublishing.Published }
+                .onFailure { _isPublishing.value = IsPublishing.Error }
         }
     }
 }

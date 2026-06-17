@@ -23,3 +23,10 @@ sealed interface FormEvent {
 
     data object OnSaveClicked : FormEvent
 }
+
+sealed interface IsPublishing{
+    object Idle : IsPublishing
+    object Publishing : IsPublishing
+    object Published : IsPublishing
+    object Error : IsPublishing
+}

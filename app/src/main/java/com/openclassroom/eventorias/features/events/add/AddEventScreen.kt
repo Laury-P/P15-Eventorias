@@ -27,6 +27,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -38,8 +39,11 @@ import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
 import com.openclassroom.eventorias.features.events.add.component.CategorySelector
 import com.openclassroom.eventorias.features.events.add.component.DateTimeSelector
 import com.openclassroom.eventorias.features.events.detail.FormEvent
+import com.openclassroom.eventorias.features.events.detail.IsPublishing
+import com.openclassroom.eventorias.features.events.eventList.component.LoadingComponent
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.EventListScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,6 +54,19 @@ fun AddEventScreen(
     navigator: DestinationsNavigator,
     viewModel: AddEventViewModel = hiltViewModel()
 ) {
+    val newEvent by viewModel.newEvent.collectAsStateWithLifecycle()
+    val isPublishing by viewModel.isPublishing.collectAsStateWithLifecycle()
+
+    LaunchedEffect(isPublishing) {
+        if (isPublishing is IsPublishing.Published){
+            navigator.navigate(EventListScreenDestination)
+        }
+    }
+
+    //TODO Améliorer gestion d'erreur
+
+    if(isPublishing is IsPublishing.Publishing) LoadingComponent()
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -79,7 +96,7 @@ fun AddEventScreen(
             )
         }
     ) { innerPadding ->
-        val newEvent by viewModel.newEvent.collectAsStateWithLifecycle()
+
         val dims = EventoriasTheme.dimensions
         Column(
             modifier = Modifier
@@ -111,8 +128,8 @@ fun AddEventScreen(
                 DateTimeSelector(
                     date = newEvent.date,
                     time = newEvent.time,
-                    onDateSelected = {viewModel.onAction(FormEvent.DateChanged(it))},
-                    onTimeSelected = {viewModel.onAction(FormEvent.TimeChanged(it))}
+                    onDateSelected = { viewModel.onAction(FormEvent.DateChanged(it)) },
+                    onTimeSelected = { viewModel.onAction(FormEvent.TimeChanged(it)) }
                 )
 
                 TextField(
@@ -128,7 +145,7 @@ fun AddEventScreen(
 
                 CategorySelector(
                     selectedCategory = newEvent.category,
-                    onCategorySelected = {viewModel.onAction(FormEvent.CategoryChanged(it))},
+                    onCategorySelected = { viewModel.onAction(FormEvent.CategoryChanged(it)) },
                 )
 
                 Row(
@@ -182,9 +199,15 @@ fun AddEventScreen(
                     disabledContentColor = MaterialTheme.colorScheme.onTertiary,
                     disabledContainerColor = MaterialTheme.colorScheme.tertiary
                 ),
-                shape = MaterialTheme.shapes.small
+                shape = MaterialTheme.shapes.small,
+                enabled = isPublishing != IsPublishing.Publishing
             ) {
-                Text(text = stringResource(R.string.add_event_button))
+                Text(
+                    text =
+                        if (isPublishing is IsPublishing.Error) {
+                            stringResource(R.string.retry_button)
+                        } else stringResource(R.string.add_event_button),
+                )
             }
 
         }
