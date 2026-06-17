@@ -1,9 +1,12 @@
 package com.openclassroom.eventorias.core.data.repository
 
+import android.net.Uri
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.snapshots
+import com.google.firebase.storage.FirebaseStorage
 import com.openclassroom.eventorias.core.data.mapping.toDomain
+import com.openclassroom.eventorias.core.data.mapping.toDto
 import com.openclassroom.eventorias.core.data.model.EventDto
 import com.openclassroom.eventorias.core.domain.model.Event
 import com.openclassroom.eventorias.core.domain.repository.EventRepository
@@ -14,7 +17,9 @@ import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class FirebaseEventRepository @Inject constructor(private val firestore: FirebaseFirestore) :
+class FirebaseEventRepository @Inject constructor(
+    private val firestore: FirebaseFirestore,
+    private val storage: FirebaseStorage) :
     EventRepository {
     override fun getListEvent(): Flow<List<Event>> {
         val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
@@ -60,6 +65,25 @@ class FirebaseEventRepository @Inject constructor(private val firestore: Firebas
                     documentSnapshot.id
                 }
             }
+    }
+
+    override suspend fun addEvent(event: Event): Result<Unit> = runCatching{
+        val eventDto = event.toDto()
+        firestore.collection("events").document(event.id).set(eventDto).await()
+    }
+
+    override fun generateNewId(): String {
+        return firestore.collection("events").document().id
+    }
+
+    override suspend fun uploadEventPhoto(eventId: String, imageUri: Uri): Result<String> = runCatching{
+        val imageRef = storage.reference.child("images/events/$eventId/cover_photo.jpg")
+
+        imageRef.putFile(imageUri).await()
+
+        val downloadUrl = imageRef.downloadUrl.await().toString()
+
+        downloadUrl
     }
 
 }

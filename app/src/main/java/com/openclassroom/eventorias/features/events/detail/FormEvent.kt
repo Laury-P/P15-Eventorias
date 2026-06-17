@@ -1,6 +1,7 @@
 package com.openclassroom.eventorias.features.events.detail
 
 import android.net.Uri
+import com.openclassroom.eventorias.core.domain.model.EventCategory
 
 
 sealed interface FormEvent {
@@ -15,6 +16,8 @@ sealed interface FormEvent {
     data class AddressChanged (val address : String) : FormEvent
 
     data class PhotoSelected(val uri : Uri) : FormEvent
+
+    data class CategoryChanged(val category: EventCategory) : FormEvent
 
     data object OnSaveClicked : FormEvent
 }
