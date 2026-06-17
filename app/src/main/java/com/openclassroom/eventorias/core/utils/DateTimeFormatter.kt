@@ -23,10 +23,10 @@ fun LocalDateTime.toFormattedTimeString(): String {
 val addFormDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy")
 val addFormTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
-fun String.toLocalDate() : LocalDate {
-    return LocalDate.parse(this, addFormDateFormatter)
+fun LocalDate.toAddFormFormat() : String {
+    return this.format(addFormDateFormatter)
 }
 
-fun String.toLocalTime() : LocalTime {
-    return LocalTime.parse(this,addFormTimeFormatter)
+fun LocalTime.toAddFormFormat() : String {
+    return this.format((addFormTimeFormatter))
 }

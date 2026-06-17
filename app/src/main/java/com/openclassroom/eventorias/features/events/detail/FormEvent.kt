@@ -2,6 +2,8 @@ package com.openclassroom.eventorias.features.events.detail
 
 import android.net.Uri
 import com.openclassroom.eventorias.core.domain.model.EventCategory
+import java.time.LocalDate
+import java.time.LocalTime
 
 
 sealed interface FormEvent {
@@ -9,9 +11,9 @@ sealed interface FormEvent {
 
     data class DescriptionChanged(val description : String) : FormEvent
 
-    data class DateChanged(val date : String) : FormEvent
+    data class DateChanged(val date : LocalDate) : FormEvent
 
-    data class TimeChanged(val time : String) : FormEvent
+    data class TimeChanged(val time : LocalTime) : FormEvent
 
     data class AddressChanged (val address : String) : FormEvent
 

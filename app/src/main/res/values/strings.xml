@@ -73,9 +73,7 @@
     <string name="description_label">Description</string>
     <string name="description_placeholder">Tap here to enter your description</string>
     <string name="date_label">Date</string>
-    <string name="date_placeholder">MM/DD/YYYY</string>
     <string name="time_label">Time</string>
-    <string name="time_placeholder">HH:MM</string>
     <string name="address_label">Address</string>
     <string name="address_placeholder">Enter full address</string>
     <string name="take_photo_description">Take a photo</string>

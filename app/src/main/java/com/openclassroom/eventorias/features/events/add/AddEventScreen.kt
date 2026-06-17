@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AttachFile
@@ -29,11 +30,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
 import com.openclassroom.eventorias.features.events.add.component.CategorySelector
+import com.openclassroom.eventorias.features.events.add.component.DateTimeSelector
 import com.openclassroom.eventorias.features.events.detail.FormEvent
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -92,7 +95,9 @@ fun AddEventScreen(
                     onValueChange = { viewModel.onAction(FormEvent.TitleChanged(it)) },
                     label = { Text(stringResource(R.string.title_label)) },
                     placeholder = { Text(stringResource(R.string.title_placeholder)) },
-                    shape = MaterialTheme.shapes.small
+                    shape = MaterialTheme.shapes.small,
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
@@ -100,37 +105,25 @@ fun AddEventScreen(
                     onValueChange = { viewModel.onAction(FormEvent.DescriptionChanged(it)) },
                     label = { Text(stringResource(R.string.description_label)) },
                     placeholder = { Text(stringResource(R.string.description_placeholder)) },
-                    shape = MaterialTheme.shapes.small
+                    shape = MaterialTheme.shapes.small,
+                    maxLines = 5
                 )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(dims.padding16),
+                DateTimeSelector(
+                    date = newEvent.date,
+                    time = newEvent.time,
+                    onDateSelected = {viewModel.onAction(FormEvent.DateChanged(it))},
+                    onTimeSelected = {viewModel.onAction(FormEvent.TimeChanged(it))}
+                )
 
-                    ) {
-                    TextField(
-                        modifier = Modifier.weight(1f),
-                        value = newEvent.date,
-                        onValueChange = { viewModel.onAction(FormEvent.DateChanged(it)) },
-                        label = { Text(stringResource(R.string.date_label)) },
-                        placeholder = { Text(stringResource(R.string.date_placeholder)) },
-                        shape = MaterialTheme.shapes.small
-                    )
-                    TextField(
-                        modifier = Modifier.weight(1f),
-                        value = newEvent.time,
-                        onValueChange = { viewModel.onAction(FormEvent.TimeChanged(it)) },
-                        label = { Text(stringResource(R.string.time_label)) },
-                        placeholder = { Text(stringResource(R.string.time_placeholder)) },
-                        shape = MaterialTheme.shapes.small
-                    )
-                }
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = newEvent.address,
                     onValueChange = { viewModel.onAction(FormEvent.AddressChanged(it)) },
                     label = { Text(stringResource(R.string.address_label)) },
                     placeholder = { Text(stringResource(R.string.address_placeholder)) },
-                    shape = MaterialTheme.shapes.small
+                    shape = MaterialTheme.shapes.small,
+                    maxLines = 2,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 )
 
                 CategorySelector(

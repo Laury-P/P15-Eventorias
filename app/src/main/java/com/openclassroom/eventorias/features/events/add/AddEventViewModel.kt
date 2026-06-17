@@ -11,6 +11,8 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalTime
 
 @HiltViewModel
 class AddEventViewModel @Inject constructor(private val addEventUseCase: AddEventUseCase): ViewModel() {
@@ -65,8 +67,8 @@ class AddEventViewModel @Inject constructor(private val addEventUseCase: AddEven
 data class NewUiEvent(
     val title: String = "",
     val description: String = "",
-    val date: String = "",
-    val time: String = "",
+    val date: LocalDate? = null,
+    val time: LocalTime? = null,
     val address: String = "",
     val category: EventCategory = EventCategory.DIVERSE,
     val pictureUri: Uri? = null,

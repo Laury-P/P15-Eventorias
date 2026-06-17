@@ -3,8 +3,6 @@ package com.openclassroom.eventorias.features.events.usecases
 import com.openclassroom.eventorias.core.domain.model.Event
 import com.openclassroom.eventorias.core.domain.repository.AuthRepository
 import com.openclassroom.eventorias.core.domain.repository.EventRepository
-import com.openclassroom.eventorias.core.utils.toLocalDate
-import com.openclassroom.eventorias.core.utils.toLocalTime
 import com.openclassroom.eventorias.features.events.add.NewUiEvent
 import jakarta.inject.Inject
 import java.time.LocalDateTime
@@ -24,7 +22,7 @@ class AddEventUseCase @Inject constructor(
                 .getOrThrow()
         } else ""
 
-        val dateTime = LocalDateTime.of(newEvent.date.toLocalDate(), newEvent.time.toLocalTime())
+        val dateTime = LocalDateTime.of(newEvent.date, newEvent.time)
 
         val event = Event(
             id = eventId,
