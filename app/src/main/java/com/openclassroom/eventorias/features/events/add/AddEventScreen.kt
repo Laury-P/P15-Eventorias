@@ -47,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.core.content.ContextCompat
@@ -324,7 +325,8 @@ fun AddEventContent(
 
                 TextButton(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .testTag("save_event_button"),
                     onClick = { onAction(FormEvent.OnSaveClicked(context)) },
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
