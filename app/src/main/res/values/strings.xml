@@ -6,6 +6,9 @@
     <!-- Error -->
     <string name="error_text">An error has occurred, \nplease try again later.</string>
     <string name="error_title">Error</string>
+    <string name="network_error">An error has occurred. Check your internet connection and retry.</string>
+    <string name="logged_out_error">You are not connected. Log in first before publishing an event.</string>
+    <string name="unknown_error">An error has occurred. Please try again later.</string>
 
     <!-- Button -->
     <string name="retry_button">Try again</string>
@@ -79,6 +82,7 @@
     <string name="take_photo_description">Take a photo</string>
     <string name="select_from_gallery_description">Select from gallery</string>
     <string name="category_label">Category</string>
+    <string name="photo_preview_description">Selected photo of the event</string>
 
 
 </resources>

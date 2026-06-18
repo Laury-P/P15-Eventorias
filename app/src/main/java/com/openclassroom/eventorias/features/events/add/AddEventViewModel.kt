@@ -3,9 +3,12 @@ package com.openclassroom.eventorias.features.events.add
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.FirebaseNetworkException
 import com.openclassroom.eventorias.core.domain.model.EventCategory
+import com.openclassroom.eventorias.core.utils.isNetworkAvailable
 import com.openclassroom.eventorias.features.events.detail.FormEvent
 import com.openclassroom.eventorias.features.events.detail.IsPublishing
+import com.openclassroom.eventorias.features.events.detail.PublishError
 import com.openclassroom.eventorias.features.events.usecases.AddEventUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -55,17 +58,27 @@ class AddEventViewModel @Inject constructor(private val addEventUseCase: AddEven
                 _newEvent.value = _newEvent.value.copy(category = formEvent.category)
             }
 
-            FormEvent.OnSaveClicked -> addEvent()
+            is FormEvent.OnSaveClicked -> {
+                if(!isNetworkAvailable(formEvent.context)) {
+                    _isPublishing.value = IsPublishing.Error(PublishError.NetworkError)
+                } else addEvent()
+            }
         }
     }
 
     fun addEvent() {
-        // todo add a method to check info.
         viewModelScope.launch{
             _isPublishing.value = IsPublishing.Publishing
             addEventUseCase(newEvent.value)
                 .onSuccess { _isPublishing.value = IsPublishing.Published }
-                .onFailure { _isPublishing.value = IsPublishing.Error }
+                .onFailure { exception ->
+                    val publishError = when(exception) {
+                        is IllegalStateException -> PublishError.UserNotLoggedIn
+                        is FirebaseNetworkException -> PublishError.NetworkError
+                        else -> PublishError.UnknownError
+                    }
+                    _isPublishing.value = IsPublishing.Error(publishError)
+                }
         }
     }
 }
