@@ -13,6 +13,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import com.openclassroom.eventorias.R
 import com.openclassroom.eventorias.core.ui.component.DatePickerModal
 import com.openclassroom.eventorias.core.ui.component.TimePickerModal
@@ -50,10 +52,14 @@ fun DateTimeSelector(
                 readOnly = true,
                 enabled = true,
             )
+            val dateDescription = stringResource(R.string.date_description)
             Box(
                 modifier = Modifier
                     .matchParentSize()
                     .clickable { showDatePicker.value = true }
+                    .clearAndSetSemantics {
+                        contentDescription = dateDescription
+                    }
             )
         }
 
@@ -69,10 +75,15 @@ fun DateTimeSelector(
                 readOnly = true,
                 enabled = true,
             )
+            val timeDescription = stringResource(R.string.time_description)
             Box(
+
                 modifier = Modifier
                     .matchParentSize()
                     .clickable { showTimePicker.value = true }
+                    .clearAndSetSemantics {
+                        contentDescription = timeDescription
+                    }
             )
         }
 
