@@ -46,7 +46,7 @@ class SetUserParticipationUseCaseTest {
     fun `when repository fails, returns failure`() = runTest {
         // 1. ARRANGE
         fakeAuthRepository.currentUserId = "user_789"
-        fakeEventRepository.shouldReturnFailure = true
+        fakeEventRepository.shouldParticipationUpdateReturnFailure = true
 
         // 2. ACT
         val result = useCase(newStatus = false, eventId = "event_123")

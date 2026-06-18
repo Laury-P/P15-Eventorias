@@ -53,6 +53,7 @@ import com.openclassroom.eventorias.features.events.eventList.component.LoadingC
 import com.openclassroom.eventorias.features.events.eventList.model.ListEventUiState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.AddEventScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.EventDetailScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -163,7 +164,7 @@ fun EventListScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { TODO() },
+                onClick = { navigator.navigate(AddEventScreenDestination) },
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
                 Icon(
