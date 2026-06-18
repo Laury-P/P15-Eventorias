@@ -158,7 +158,7 @@ class EventDetailViewModelTest {
 
     @Test
     fun `when participation fails, emits ShowError effect`() = runTest {
-        fakeEventRepository.shouldReturnFailure = true
+        fakeEventRepository.shouldParticipationUpdateReturnFailure = true
 
         viewModel.effect.test {
             viewModel.setUserParticipation(newStatus = true, eventId = targetEventId)
