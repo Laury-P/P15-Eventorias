@@ -94,6 +94,6 @@
     <string name="email_label">Email</string>
     <string name="notification_switch_label">Notifications</string>
     <string name="profile_error">An error occurred.\n You will be redirected shortly to the event list.\n Try again later.</string>
-
+    <string name="logout_failed"> Log out unexpectedly failed. </string>
 
 </resources>

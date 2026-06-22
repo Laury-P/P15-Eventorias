@@ -1,5 +1,7 @@
 package com.openclassroom.eventorias.features.profile
 
+import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +18,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -25,10 +30,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -46,10 +53,12 @@ import com.openclassroom.eventorias.core.ui.theme.EventoriasTheme
 import com.openclassroom.eventorias.features.events.eventList.component.LoadingComponent
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.AuthScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.EventListScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
 @Composable
@@ -62,8 +71,26 @@ fun ProfileScreen(
 
     val dims = EventoriasTheme.dimensions
 
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.logoutEvent.collect { result ->
+            result.onSuccess { navigator.navigate(AuthScreenDestination) }
+                .onFailure {
+                    val snackBarResult = snackbarHostState.showSnackbar(
+                        message = context.getString(R.string.logout_failed),
+                        actionLabel = context.getString(R.string.retry_button),
+                        withDismissAction = true,
+                    )
+                    if (snackBarResult == SnackbarResult.ActionPerformed) viewModel.logOut()
+                }
+        }
+    }
+
     Scaffold(
         modifier = modifier,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -78,18 +105,22 @@ fun ProfileScreen(
                     titleContentColor = MaterialTheme.colorScheme.onBackground,
                 ),
                 actions = {
-                    IconButton(
-                        onClick = {}
-                    ) {
-                        AsyncImage(
-                            model = (userState as UiState.Success).user.avatar,
-                            modifier = Modifier
-                                .size(dims.avatarDetail)
-                                .clip(CircleShape),
-                            contentDescription = stringResource(R.string.avatar_description),
-                            contentScale = ContentScale.Crop
-                        )
+                    val avatarUrl = (userState as UiState.Success).user.avatar
+                    if (avatarUrl != null) {
+                        IconButton(
+                            onClick = {}
+                        ) {
+                            AsyncImage(
+                                model = avatarUrl,
+                                modifier = Modifier
+                                    .size(dims.avatarDetail)
+                                    .clip(CircleShape),
+                                contentDescription = stringResource(R.string.avatar_description),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     }
+
                 }
             )
         }
@@ -100,11 +131,12 @@ fun ProfileScreen(
                 ProfileContent(
                     modifier = modifier.padding(innerPadding),
                     user = user,
-                    onLogoutClick = {}, //TODO,
+                    onLogoutClick = { viewModel.logOut() },
                     notificationStatus = true,
                     onSwitchClicked = {}
                 )
             }
+
             is UiState.Idle -> LoadingComponent()
             is UiState.Error -> {
                 // TODO Gerer erreur lors de la deconnexions != de erreur profil ou erreur modifications
