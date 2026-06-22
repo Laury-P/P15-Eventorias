@@ -18,6 +18,7 @@
     <string name="event_nav_button">Events</string>
     <string name="profile_nav_button">Profile</string>
     <string name="add_event_button">Validate</string>
+    <string name="logout_button">Log out</string>
 
     <!-- Auth -->
     <string name="profile_completion_title">Profile creation for: %1$s</string>
@@ -85,6 +86,14 @@
     <string name="select_from_gallery_description">Select from gallery</string>
     <string name="category_label">Category</string>
     <string name="photo_preview_description">Selected photo of the event</string>
+
+    <!-- Profile -->
+    <string name="profile_screen_title">User profile</string>
+    <string name="avatar_description">Current chosen avatar</string>
+    <string name="name_label">Name</string>
+    <string name="email_label">Email</string>
+    <string name="notification_switch_label">Notifications</string>
+    <string name="profile_error">An error occurred.\n You will be redirected shortly to the event list.\n Try again later.</string>
 
 
 </resources>
