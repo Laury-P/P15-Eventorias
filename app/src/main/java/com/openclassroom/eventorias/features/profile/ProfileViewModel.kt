@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassroom.eventorias.core.domain.model.User
 import com.openclassroom.eventorias.core.domain.repository.AuthRepository
+import com.openclassroom.eventorias.core.domain.repository.NotificationRepository
 import com.openclassroom.eventorias.features.profile.usecases.GetUserInfoUseCase
 import com.openclassroom.eventorias.features.profile.usecases.UpdateAvatarUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     getUserInfoUseCase: GetUserInfoUseCase,
     private val updateAvatarUseCase: UpdateAvatarUseCase,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val notificationRepository: NotificationRepository
 ) :
     ViewModel() {
 
@@ -32,6 +34,9 @@ class ProfileViewModel @Inject constructor(
 
     private val _uploadingAvatarState = MutableStateFlow<AvatarUploadingState>(AvatarUploadingState.Idle)
     val uploadingAvatarState = _uploadingAvatarState.asStateFlow()
+
+    private val _notificationState = MutableStateFlow(false)
+    val notificationState = _notificationState.asStateFlow()
 
     val uiState: StateFlow<UiState> = getUserInfoUseCase()
         .map { result ->
@@ -62,6 +67,12 @@ class ProfileViewModel @Inject constructor(
             updateAvatarUseCase(newUri, oldUri)
                 .onSuccess { _uploadingAvatarState.value = AvatarUploadingState.Success }
                 .onFailure { _uploadingAvatarState.value = AvatarUploadingState.Error(it.message ?: "Unknown error") }
+        }
+    }
+
+    fun toggleNotification(newStatus: Boolean) {
+        viewModelScope.launch {
+            notificationRepository.toggleAllNotification(newStatus)
         }
     }
 }

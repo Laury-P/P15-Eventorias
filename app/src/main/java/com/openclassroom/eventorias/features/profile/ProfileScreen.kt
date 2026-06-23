@@ -1,6 +1,9 @@
 package com.openclassroom.eventorias.features.profile
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -49,6 +52,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -74,6 +78,7 @@ fun ProfileScreen(
 ) {
     val userState by viewModel.uiState.collectAsStateWithLifecycle()
     val uploadingState by viewModel.uploadingAvatarState.collectAsStateWithLifecycle()
+    val notificationStatus by viewModel.notificationState.collectAsStateWithLifecycle()
 
     val dims = EventoriasTheme.dimensions
 
@@ -106,6 +111,16 @@ fun ProfileScreen(
                 message = context.getString(R.string.upload_avatar_failure),
                 withDismissAction = true
             )
+        }
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) { isGranted ->
+        if (isGranted) {
+            viewModel.toggleNotification(!notificationStatus)
+        } else {
+            viewModel.toggleNotification(false)
         }
 
     }
@@ -170,8 +185,22 @@ fun ProfileScreen(
                     modifier = modifier.padding(innerPadding),
                     user = user,
                     onLogoutClick = { viewModel.logOut() },
-                    notificationStatus = true,
-                    onSwitchClicked = {}
+                    notificationStatus = notificationStatus,
+                    onSwitchClicked = {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            val hasPermissions = ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.POST_NOTIFICATIONS
+                            ) == PackageManager.PERMISSION_GRANTED
+                            if (!hasPermissions) {
+                                permissionLauncher.launch(
+                                    Manifest.permission.POST_NOTIFICATIONS
+                                )
+                            } else viewModel.toggleNotification(!notificationStatus)
+                        } else {
+                            viewModel.toggleNotification(!notificationStatus)
+                        }
+                    }
                 )
             }
 
