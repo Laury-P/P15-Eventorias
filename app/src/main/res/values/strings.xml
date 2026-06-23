@@ -90,10 +90,13 @@
     <!-- Profile -->
     <string name="profile_screen_title">User profile</string>
     <string name="avatar_description">Current chosen avatar</string>
+    <string name="no_avatar">Choose an avatar</string>
     <string name="name_label">Name</string>
     <string name="email_label">Email</string>
     <string name="notification_switch_label">Notifications</string>
     <string name="profile_error">An error occurred.\n You will be redirected shortly to the event list.\n Try again later.</string>
     <string name="logout_failed"> Log out unexpectedly failed. </string>
+    <string name="upload_avatar_failure"> Failed to change avatar. Retry later.</string>
+
 
 </resources>

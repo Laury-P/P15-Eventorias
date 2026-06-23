@@ -27,13 +27,12 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindEventRepository(
-        firebaseEventRepository: FirebaseEventRepository
+        firebaseEventRepository: FirebaseEventRepository,
     ) : EventRepository
 
     @Binds
     @Singleton
     abstract fun bindAuthRepository(
-        @ApplicationContext context: Context,
-        firebaseAuthRepository: FirebaseAuthRepository
+        firebaseAuthRepository: FirebaseAuthRepository,
     ) : AuthRepository
 }

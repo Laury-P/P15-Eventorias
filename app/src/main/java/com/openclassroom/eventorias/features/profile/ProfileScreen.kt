@@ -1,7 +1,9 @@
 package com.openclassroom.eventorias.features.profile
 
 import android.annotation.SuppressLint
-import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,8 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -43,7 +49,6 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -68,11 +73,19 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val userState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uploadingState by viewModel.uploadingAvatarState.collectAsStateWithLifecycle()
 
     val dims = EventoriasTheme.dimensions
 
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val pickMedia =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                viewModel.updateAvatar(uri)
+            }
+        }
 
     LaunchedEffect(Unit) {
         viewModel.logoutEvent.collect { result ->
@@ -86,6 +99,15 @@ fun ProfileScreen(
                     if (snackBarResult == SnackbarResult.ActionPerformed) viewModel.logOut()
                 }
         }
+    }
+    LaunchedEffect(Unit) {
+        if (uploadingState is AvatarUploadingState.Error) {
+            snackbarHostState.showSnackbar(
+                message = context.getString(R.string.upload_avatar_failure),
+                withDismissAction = true
+            )
+        }
+
     }
 
     Scaffold(
@@ -105,19 +127,35 @@ fun ProfileScreen(
                     titleContentColor = MaterialTheme.colorScheme.onBackground,
                 ),
                 actions = {
-                    val avatarUrl = (userState as UiState.Success).user.avatar
-                    if (avatarUrl != null) {
+                    if (uploadingState is AvatarUploadingState.Uploading) {
+                        CircularProgressIndicator()
+                    } else {
+                        val avatarUrl = (userState as? UiState.Success)?.user?.avatar
                         IconButton(
-                            onClick = {}
+                            onClick = {
+                                pickMedia.launch(
+                                    PickVisualMediaRequest(
+                                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                                    )
+                                )
+                            }
                         ) {
-                            AsyncImage(
-                                model = avatarUrl,
-                                modifier = Modifier
-                                    .size(dims.avatarDetail)
-                                    .clip(CircleShape),
-                                contentDescription = stringResource(R.string.avatar_description),
-                                contentScale = ContentScale.Crop
-                            )
+                            if (avatarUrl == null) {
+                                Icon(
+                                    imageVector = Icons.Filled.AccountCircle,
+                                    contentDescription = stringResource(R.string.no_avatar),
+                                    modifier = Modifier.size(dims.avatarProfile)
+                                )
+                            } else {
+                                AsyncImage(
+                                    model = avatarUrl,
+                                    modifier = Modifier
+                                        .size(dims.avatarDetail)
+                                        .clip(CircleShape),
+                                    contentDescription = stringResource(R.string.avatar_description),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
                         }
                     }
 
@@ -139,7 +177,6 @@ fun ProfileScreen(
 
             is UiState.Idle -> LoadingComponent()
             is UiState.Error -> {
-                // TODO Gerer erreur lors de la deconnexions != de erreur profil ou erreur modifications
                 LaunchedEffect(userState) {
                     delay(2500)
                     navigator.navigate(EventListScreenDestination)
@@ -158,6 +195,7 @@ fun ProfileScreen(
             }
         }
     }
+
 
 }
 
