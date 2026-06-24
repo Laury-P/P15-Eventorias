@@ -6,4 +6,7 @@ class FakeAuthRepository : AuthRepository {
     var currentUserId : String? = null
 
     override fun getUserId(): String? = currentUserId
+    override suspend fun signOut(): Result<Unit> {
+        return Result.success(Unit)
+    }
 }

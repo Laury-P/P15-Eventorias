@@ -1,7 +1,10 @@
 package com.openclassroom.eventorias.features.event.fakes
 
+import android.net.Uri
 import com.openclassroom.eventorias.core.domain.model.User
 import com.openclassroom.eventorias.core.domain.repository.UserRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 class FakeUserRepository : UserRepository{
     private val users = mutableMapOf<String, User>()
@@ -12,6 +15,21 @@ class FakeUserRepository : UserRepository{
 
     override suspend fun addUser(user: User): Result<Unit> {
         users[user.id] = user
+        return Result.success(Unit)
+    }
+
+    override fun observeUserById(userId: String): Flow<User?> {
+        return flowOf(users[userId])
+    }
+
+    override suspend fun uploadAvatarPhoto(
+        userId: String,
+        imageUri: Uri
+    ): Result<Unit> {
+        return Result.success(Unit)
+    }
+
+    override suspend fun deleteAvatarByUrl(imageUrl: String): Result<Unit> {
         return Result.success(Unit)
     }
 }
