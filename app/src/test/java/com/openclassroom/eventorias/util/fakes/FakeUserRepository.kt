@@ -1,4 +1,4 @@
-package com.openclassroom.eventorias.features.event.fakes
+package com.openclassroom.eventorias.util.fakes
 
 import android.net.Uri
 import com.openclassroom.eventorias.core.domain.model.User

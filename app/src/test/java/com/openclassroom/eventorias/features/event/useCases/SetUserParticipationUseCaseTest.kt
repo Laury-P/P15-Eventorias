@@ -1,7 +1,7 @@
 package com.openclassroom.eventorias.features.event.useCases
 
-import com.openclassroom.eventorias.features.event.fakes.FakeAuthRepository
-import com.openclassroom.eventorias.features.event.fakes.FakeEventRepository
+import com.openclassroom.eventorias.util.fakes.FakeAuthRepository
+import com.openclassroom.eventorias.util.fakes.FakeEventRepository
 import com.openclassroom.eventorias.features.events.usecases.SetUserParticipationUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

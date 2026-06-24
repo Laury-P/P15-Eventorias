@@ -3,9 +3,9 @@ package com.openclassroom.eventorias.features.event.eventDetail
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.openclassroom.eventorias.core.domain.model.Event
-import com.openclassroom.eventorias.features.event.fakes.FakeAuthRepository
-import com.openclassroom.eventorias.features.event.fakes.FakeEventRepository
-import com.openclassroom.eventorias.features.event.fakes.FakeUserRepository
+import com.openclassroom.eventorias.util.fakes.FakeAuthRepository
+import com.openclassroom.eventorias.util.fakes.FakeEventRepository
+import com.openclassroom.eventorias.util.fakes.FakeUserRepository
 import com.openclassroom.eventorias.features.events.detail.EventDetailViewModel
 import com.openclassroom.eventorias.features.events.detail.model.DetailEventUiState
 import com.openclassroom.eventorias.features.events.usecases.GetEventDetailUseCase
