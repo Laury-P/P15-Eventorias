@@ -29,7 +29,11 @@ class FakeUserRepository : UserRepository{
         return Result.success(Unit)
     }
 
+
+    var shouldDeleteAvatarFail = false
     override suspend fun deleteAvatarByUrl(imageUrl: String): Result<Unit> {
-        return Result.success(Unit)
+        return if (shouldDeleteAvatarFail) {
+            Result.failure(RuntimeException("Network error on delete"))
+        } else Result.success(Unit)
     }
 }
