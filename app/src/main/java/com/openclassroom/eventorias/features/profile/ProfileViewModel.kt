@@ -35,8 +35,12 @@ class ProfileViewModel @Inject constructor(
     private val _uploadingAvatarState = MutableStateFlow<AvatarUploadingState>(AvatarUploadingState.Idle)
     val uploadingAvatarState = _uploadingAvatarState.asStateFlow()
 
-    private val _notificationState = MutableStateFlow(false)
-    val notificationState = _notificationState.asStateFlow()
+    val notificationState : StateFlow<Boolean> = notificationRepository.isSubscribedToAllNotification
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
 
     val uiState: StateFlow<UiState> = getUserInfoUseCase()
         .map { result ->
