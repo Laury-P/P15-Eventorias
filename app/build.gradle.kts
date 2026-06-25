@@ -42,6 +42,19 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true // Permet de générer les classes qui permettent d'acceder à l'API Key dans local.properties
+    }
+
+    packaging {
+        resources {
+            // Exclut les fichiers de licence de JUnit qui provoquent le conflit
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
+
+            // Par sécurité, on peut aussi ajouter ces exclusions classiques souvent liées à JUnit 5 / MockK
+            excludes += "/META-INF/LICENSE"
+            excludes += "/META-INF/NOTICE"
+        }
     }
 }
 tasks.withType<Test>().configureEach {
@@ -49,6 +62,7 @@ tasks.withType<Test>().configureEach {
 }
 
 dependencies {
+
     // --- NOYAU & UI ---
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
@@ -63,6 +77,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.compose.icons.extended)
+    implementation(libs.androidx.compose.ui.text.google.fonts)
 
     // Outil pour voir tes aperçus d'écrans dans Android Studio (uniquement en mode debug)
     debugImplementation(libs.androidx.compose.ui.tooling)
@@ -74,8 +89,11 @@ dependencies {
     ksp(libs.hilt.compiler) // KSP génère le code Hilt à la compilation
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.compose.destinations.core)
-    implementation(libs.compose.destinations.ksp)
+    ksp(libs.compose.destinations.ksp)
+    implementation(libs.hilt.navigation.compose)
 
+    // --- DATASTORE ---
+    implementation(libs.datastore)
 
     // --- SERVICES EXTERNES (Firebase & Images) ---
     implementation(platform(libs.firebase.bom))
@@ -94,6 +112,7 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 
     // --- 🧪 TESTS D'INTÉGRATION & UI (Dossier androidTest/ - JUnit 4 & Compose UI) ---
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -101,7 +120,13 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.androidx.espresso.intent)
 
     // Requis pour inspecter l'arborescence Compose pendant les tests d'UI
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+secrets {
+    defaultPropertiesFileName = "local.properties"
 }
