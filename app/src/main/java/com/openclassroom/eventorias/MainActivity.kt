@@ -9,8 +9,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.PersonOutline
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
@@ -51,7 +53,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier,
                     bottomBar = {
                         if (currentDestination in destinationsWithNavBar)
-                            NavigationBar {
+                            NavigationBar(
+                                containerColor = MaterialTheme.colorScheme.background,
+                            ) {
                                 // Onglet Event List
                                 NavigationBarItem(
                                     selected = currentDestination == EventListScreenDestination,
@@ -62,7 +66,14 @@ class MainActivity : ComponentActivity() {
                                             contentDescription = null
                                         )
                                     },
-                                    label = { Text(stringResource(R.string.event_nav_button)) }
+                                    label = { Text(stringResource(R.string.event_nav_button)) },
+                                    colors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = MaterialTheme.colorScheme.onBackground,
+                                        selectedTextColor = MaterialTheme.colorScheme.onBackground,
+                                        unselectedIconColor = MaterialTheme.colorScheme.onBackground,
+                                        unselectedTextColor = MaterialTheme.colorScheme.onBackground,
+                                        indicatorColor = MaterialTheme.colorScheme.surface
+                                    )
                                 )
 
                                 // Onglet Profile
@@ -75,7 +86,15 @@ class MainActivity : ComponentActivity() {
                                             contentDescription = null
                                         )
                                     },
-                                    label = { Text(stringResource(R.string.profile_nav_button)) }
+                                    label = { Text(stringResource(R.string.profile_nav_button)) },
+                                    colors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = MaterialTheme.colorScheme.onBackground,
+                                        selectedTextColor = MaterialTheme.colorScheme.onBackground,
+                                        unselectedIconColor = MaterialTheme.colorScheme.onBackground,
+                                        unselectedTextColor = MaterialTheme.colorScheme.onBackground,
+                                        indicatorColor = MaterialTheme.colorScheme.surface
+
+                                    )
                                 )
                             }
                     }

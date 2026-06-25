@@ -173,15 +173,17 @@ fun EventDetailContent(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(dims.padding24)
         ) {
-            AsyncImage(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .clip(MaterialTheme.shapes.medium),
-                model = event.photoUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
+            if(event.photoUrl.isNotEmpty()) {
+                AsyncImage(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                        .clip(MaterialTheme.shapes.medium),
+                    model = event.photoUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
+            }
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
