@@ -80,8 +80,6 @@ fun ProfileScreen(
     val uploadingState by viewModel.uploadingAvatarState.collectAsStateWithLifecycle()
     val notificationStatus by viewModel.notificationState.collectAsStateWithLifecycle()
 
-    val dims = EventoriasTheme.dimensions
-
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -105,12 +103,18 @@ fun ProfileScreen(
                 }
         }
     }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(uploadingState) {
         if (uploadingState is AvatarUploadingState.Error) {
             snackbarHostState.showSnackbar(
                 message = context.getString(R.string.upload_avatar_failure),
                 withDismissAction = true
             )
+        }
+    }
+    LaunchedEffect(userState) {
+        if (userState is UiState.Error) {
+            delay(2500)
+            navigator.navigate(EventListScreenDestination)
         }
     }
 
@@ -125,6 +129,53 @@ fun ProfileScreen(
 
     }
 
+    ProfileContent(
+        modifier = modifier,
+        userState = userState,
+        snackbarHostState = snackbarHostState,
+        uploadingState = uploadingState,
+        onAvatarClick = {
+            pickMedia.launch(
+                PickVisualMediaRequest(
+                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                )
+            )
+        },
+        onLogoutClick = {viewModel.logOut()},
+        notificationStatus = notificationStatus,
+        onSwitchClicked = {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val hasPermissions = ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+                if (!hasPermissions) {
+                    permissionLauncher.launch(
+                        Manifest.permission.POST_NOTIFICATIONS
+                    )
+                } else viewModel.toggleNotification(!notificationStatus)
+            } else {
+                viewModel.toggleNotification(!notificationStatus)
+            }
+        }
+    )
+
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProfileContent(
+    modifier: Modifier,
+    userState: UiState,
+    snackbarHostState: SnackbarHostState,
+    uploadingState: AvatarUploadingState,
+    onAvatarClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+    notificationStatus : Boolean,
+    onSwitchClicked: () -> Unit
+) {
+    val dims = EventoriasTheme.dimensions
     Scaffold(
         modifier = modifier,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -147,13 +198,7 @@ fun ProfileScreen(
                     } else {
                         val avatarUrl = (userState as? UiState.Success)?.user?.avatar
                         IconButton(
-                            onClick = {
-                                pickMedia.launch(
-                                    PickVisualMediaRequest(
-                                        ActivityResultContracts.PickVisualMedia.ImageOnly
-                                    )
-                                )
-                            }
+                            onClick = { onAvatarClick() }
                         ) {
                             if (avatarUrl == null) {
                                 Icon(
@@ -180,36 +225,18 @@ fun ProfileScreen(
     ) { innerPadding ->
         when (userState) {
             is UiState.Success -> {
-                val user = (userState as UiState.Success).user
-                ProfileContent(
+                val user = userState.user
+                SuccessContent(
                     modifier = modifier.padding(innerPadding),
                     user = user,
-                    onLogoutClick = { viewModel.logOut() },
+                    onLogoutClick = { onLogoutClick() },
                     notificationStatus = notificationStatus,
-                    onSwitchClicked = {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            val hasPermissions = ContextCompat.checkSelfPermission(
-                                context,
-                                Manifest.permission.POST_NOTIFICATIONS
-                            ) == PackageManager.PERMISSION_GRANTED
-                            if (!hasPermissions) {
-                                permissionLauncher.launch(
-                                    Manifest.permission.POST_NOTIFICATIONS
-                                )
-                            } else viewModel.toggleNotification(!notificationStatus)
-                        } else {
-                            viewModel.toggleNotification(!notificationStatus)
-                        }
-                    }
+                    onSwitchClicked = { onSwitchClicked()}
                 )
             }
 
             is UiState.Idle -> LoadingComponent()
             is UiState.Error -> {
-                LaunchedEffect(userState) {
-                    delay(2500)
-                    navigator.navigate(EventListScreenDestination)
-                }
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -218,19 +245,18 @@ fun ProfileScreen(
                         text = stringResource(R.string.profile_error),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.testTag("user_error_message")
                     )
                 }
             }
         }
     }
-
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileContent(
+fun SuccessContent(
     modifier: Modifier = Modifier,
     user: User,
     notificationStatus: Boolean,
@@ -313,10 +339,10 @@ fun ProfileContent(
 
 @Preview
 @Composable
-fun ProfileContentPreview() {
+fun SuccessContentPreview() {
     EventoriasTheme(
         {
-            ProfileContent(
+            SuccessContent(
                 user = User(
                     id = "123",
                     email = "adrien.chardon@email.com",
