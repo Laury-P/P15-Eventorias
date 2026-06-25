@@ -2,9 +2,11 @@ package com.openclassroom.eventorias.core.di
 
 import com.openclassroom.eventorias.core.data.repository.FirebaseAuthRepository
 import com.openclassroom.eventorias.core.data.repository.FirebaseEventRepository
+import com.openclassroom.eventorias.core.data.repository.FirebaseNotificationRepository
 import com.openclassroom.eventorias.core.data.repository.FirebaseUserRepository
 import com.openclassroom.eventorias.core.domain.repository.AuthRepository
 import com.openclassroom.eventorias.core.domain.repository.EventRepository
+import com.openclassroom.eventorias.core.domain.repository.NotificationRepository
 import com.openclassroom.eventorias.core.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
@@ -25,12 +27,18 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindEventRepository(
-        firebaseEventRepository: FirebaseEventRepository
+        firebaseEventRepository: FirebaseEventRepository,
     ) : EventRepository
 
     @Binds
     @Singleton
     abstract fun bindAuthRepository(
-        firebaseAuthRepository: FirebaseAuthRepository
+        firebaseAuthRepository: FirebaseAuthRepository,
     ) : AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationRepository(
+        firebaseNotificationRepository: FirebaseNotificationRepository
+    ) : NotificationRepository
 }

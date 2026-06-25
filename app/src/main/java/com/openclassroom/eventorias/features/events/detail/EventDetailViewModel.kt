@@ -56,7 +56,7 @@ class EventDetailViewModel @Inject constructor(
         viewModelScope.launch {
             setUserParticipationUseCase(newStatus, eventId)
                 .onFailure { exception ->
-                    _effect.send(DetailEffect.ShowError(exception.message ?: "An error occured"))
+                    _effect.send(DetailEffect.ShowError(exception.message ?: "An error occurred"))
                 }
         }
     }

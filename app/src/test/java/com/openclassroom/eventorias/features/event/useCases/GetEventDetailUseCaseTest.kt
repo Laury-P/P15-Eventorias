@@ -3,9 +3,9 @@ package com.openclassroom.eventorias.features.event.useCases
 import app.cash.turbine.test
 import com.openclassroom.eventorias.core.domain.model.Event
 import com.openclassroom.eventorias.core.domain.model.User
-import com.openclassroom.eventorias.features.event.fakes.FakeAuthRepository
-import com.openclassroom.eventorias.features.event.fakes.FakeEventRepository
-import com.openclassroom.eventorias.features.event.fakes.FakeUserRepository
+import com.openclassroom.eventorias.util.fakes.FakeAuthRepository
+import com.openclassroom.eventorias.util.fakes.FakeEventRepository
+import com.openclassroom.eventorias.util.fakes.FakeUserRepository
 import com.openclassroom.eventorias.features.events.usecases.GetEventDetailUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

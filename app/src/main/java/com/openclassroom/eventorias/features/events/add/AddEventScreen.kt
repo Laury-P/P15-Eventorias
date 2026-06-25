@@ -186,7 +186,7 @@ fun AddEventContent(
                     title = {
                         Text(
                             text = stringResource(R.string.add_screen_title),
-                            style = MaterialTheme.typography.titleLarge
+
                         )
                     },
                     windowInsets = WindowInsets(0, 0, 0, 0),

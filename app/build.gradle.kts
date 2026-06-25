@@ -92,6 +92,8 @@ dependencies {
     ksp(libs.compose.destinations.ksp)
     implementation(libs.hilt.navigation.compose)
 
+    // --- DATASTORE ---
+    implementation(libs.datastore)
 
     // --- SERVICES EXTERNES (Firebase & Images) ---
     implementation(platform(libs.firebase.bom))

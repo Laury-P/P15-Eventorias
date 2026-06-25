@@ -2,8 +2,8 @@ package com.openclassroom.eventorias.features.event.useCases
 
 import android.net.Uri
 import com.openclassroom.eventorias.core.domain.model.EventCategory
-import com.openclassroom.eventorias.features.event.fakes.FakeAuthRepository // À adapter selon ton package
-import com.openclassroom.eventorias.features.event.fakes.FakeEventRepository
+import com.openclassroom.eventorias.util.fakes.FakeAuthRepository // À adapter selon ton package
+import com.openclassroom.eventorias.util.fakes.FakeEventRepository
 import com.openclassroom.eventorias.features.events.add.NewUiEvent
 import com.openclassroom.eventorias.features.events.usecases.AddEventUseCase
 import io.mockk.mockk
