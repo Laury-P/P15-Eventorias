@@ -4,10 +4,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.isDisplayed
+import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -28,6 +28,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 @RunWith(AndroidJUnit4::class)
 class EventListScreenTest {
@@ -43,8 +45,8 @@ class EventListScreenTest {
     // Nos données de test
     private val testDate = LocalDate.now().plusDays(1)
     private val mockEvents = listOf(
-        createMockUiEvent("Concert de Rock", EventCategory.MUSIC, testDate),
-        createMockUiEvent("Match de Foot", EventCategory.SPORTS, LocalDate.of(2026, 7, 1))
+        createFakeUiEvent("Concert de Rock", EventCategory.MUSIC, testDate),
+        createFakeUiEvent("Match de Foot", EventCategory.SPORTS, LocalDate.of(2026, 7, 1))
     )
 
     @Before
@@ -76,12 +78,12 @@ class EventListScreenTest {
             }
         }
         composeTestRule.waitUntil(timeoutMillis = 5000) {
-            composeTestRule.onAllNodesWithText("Concert de Rock").fetchSemanticsNodes().isNotEmpty()
+            composeTestRule.onNodeWithTag("Concert de Rock").isDisplayed()
         }
 
         // VÉRIFICATION : Tout le catalogue est affiché par défaut
-        composeTestRule.onNodeWithText("Concert de Rock").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Match de Foot").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Concert de Rock").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Match de Foot").assertIsDisplayed()
 
         // Les badges de filtres actifs ne doivent pas exister puisqu'aucun filtre n'est mis
         composeTestRule.onNodeWithTag("date_filter_chip").assertDoesNotExist()
@@ -106,11 +108,10 @@ class EventListScreenTest {
         // Then : Seul le concert de Rock reste à l'écran
         composeTestRule.waitUntil(timeoutMillis = 1000) {
             composeTestRule
-                .onAllNodesWithText("Match de Foot")
-                .fetchSemanticsNodes()
-                .isEmpty()
+                .onNodeWithTag("Match de Foot")
+                .isDisplayed()
         }
-        composeTestRule.onNodeWithText("Concert de Rock").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Concert de Rock").assertIsDisplayed()
 
 
         // Given: L'utilisateur efface sa recherche
@@ -119,11 +120,10 @@ class EventListScreenTest {
         // Then : La liste complète revient
         composeTestRule.waitUntil(timeoutMillis = 1000) {
             composeTestRule
-                .onAllNodesWithText("Match de Foot")
-                .fetchSemanticsNodes()
-                .isNotEmpty()
+                .onNodeWithTag("Match de Foot")
+                .isDisplayed()
         }
-        composeTestRule.onNodeWithText("Concert de Rock").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Concert de Rock").assertIsDisplayed()
     }
 
     @Test
@@ -143,17 +143,16 @@ class EventListScreenTest {
         // Then : Seul le concert de Rock reste à l'écran
         composeTestRule.waitUntil(timeoutMillis = 1000) {
             composeTestRule
-                .onAllNodesWithText("Match de Foot")
-                .fetchSemanticsNodes()
-                .isEmpty()
+                .onNodeWithTag("Match de Foot")
+                .isNotDisplayed()
         }
-        composeTestRule.onNodeWithText("Concert de Rock").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Concert de Rock").assertIsDisplayed()
 
         // When : on ferme l'écran de filtre
         composeTestRule.onNodeWithTag("filter_button").performClick()
 
         // Then : Filtre toujours actif et s'affiche au dessus de la liste
-        composeTestRule.onNodeWithText("Match de Foot").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("Match de Foot").assertDoesNotExist()
         composeTestRule.onNodeWithTag("category_filter_chip").assertIsDisplayed()
 
         // When : on supprime le filtre
@@ -162,11 +161,10 @@ class EventListScreenTest {
         // Then : La liste complète revient
         composeTestRule.waitUntil(timeoutMillis = 1000) {
             composeTestRule
-                .onAllNodesWithText("Match de Foot")
-                .fetchSemanticsNodes()
-                .isNotEmpty()
+                .onNodeWithTag("Match de Foot")
+                .isDisplayed()
         }
-        composeTestRule.onNodeWithText("Concert de Rock").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Concert de Rock").assertIsDisplayed()
     }
 
     @Test
@@ -178,7 +176,7 @@ class EventListScreenTest {
             }
         }
         composeTestRule.waitUntil(timeoutMillis = 5000) {
-            composeTestRule.onAllNodesWithText("Concert de Rock").fetchSemanticsNodes().isNotEmpty()
+            composeTestRule.onNodeWithTag("Concert de Rock").isDisplayed()
         }
 
         // When : on applique une date filtre (pas besoin de tester le datePicker de MaterialDesign)
@@ -187,14 +185,13 @@ class EventListScreenTest {
         // Then : Seul le concert de Rock reste à l'écran
         composeTestRule.waitUntil(timeoutMillis = 1000) {
             composeTestRule
-                .onAllNodesWithText("Match de Foot")
-                .fetchSemanticsNodes()
-                .isEmpty()
+                .onNodeWithTag("Match de Foot")
+                .isNotDisplayed()
         }
-        composeTestRule.onNodeWithText("Concert de Rock").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Concert de Rock").assertIsDisplayed()
 
         // Then : Filtre toujours actif et s'affiche au dessus de la liste
-        composeTestRule.onNodeWithText("Match de Foot").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("Match de Foot").assertDoesNotExist()
         composeTestRule.onNodeWithTag("date_filter_chip").assertIsDisplayed()
 
         // When : on supprime le filtre
@@ -203,28 +200,29 @@ class EventListScreenTest {
         // Then : La liste complète revient
         composeTestRule.waitUntil(timeoutMillis = 1000) {
             composeTestRule
-                .onAllNodesWithText("Match de Foot")
-                .fetchSemanticsNodes()
-                .isNotEmpty()
+                .onNodeWithTag("Match de Foot")
+                .isDisplayed()
         }
-        composeTestRule.onNodeWithText("Concert de Rock").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Concert de Rock").assertIsDisplayed()
     }
 
-    private fun createMockUiEvent(
+    private fun createFakeUiEvent(
         title: String,
         category: EventCategory,
         date: LocalDate
     ): ListEventUiModel {
-        val event = mockk<Event>()
-        every { event.title } returns title
-        every { event.category } returns category
-        every { event.dateTime } returns date.atStartOfDay()
-        every { event.photoUrl} returns ""
+        val fakeEvent = Event(
+            id = "id_$title",
+            title = title,
+            category = category,
+            description = "fake descritpion",
+            photoUrl = "",
+            dateTime = LocalDateTime.of(date, LocalTime.NOON)
+        )
 
-
-        val uiEvent = mockk<ListEventUiModel>()
-        every { uiEvent.event } returns event
-        every { uiEvent.promoterAvatarUrl} returns ""
-        return uiEvent
+        return ListEventUiModel(
+            event = fakeEvent,
+            promoterAvatarUrl = "fakeURL"
+        )
     }
 }

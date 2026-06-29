@@ -13,7 +13,7 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="ProfileScreenTest">
+      <SelectionState runConfigName="All Tests">
         <option name="selectionMode" value="DROPDOWN" />
         <DropdownSelection timestamp="2026-06-23T07:49:23.227404700Z">
           <Target type="DEFAULT_BOOT">
@@ -24,7 +24,7 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="ProfileContentTest">
+      <SelectionState runConfigName="EventListScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
         <DropdownSelection timestamp="2026-06-23T07:49:23.227404700Z">
           <Target type="DEFAULT_BOOT">
